@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
              xmlns:local="clr-namespace:Carnation"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              Background="{DynamicResource {x:Static vsshell:VsBrushes.WindowKey}}"
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
@@ -14,6 +15,11 @@
     <UserControl.Resources>
         <local:ValueIsSetVisibilityConverter x:Key="ValueIsSetVisibilityConverter" />
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <sys:Double x:Key="ColorSelectorWidth">30</sys:Double>
+
+        <DataTemplate DataType="{x:Type Color}" x:Key="ColorSelectorItemTemplate">
+            <TextBlock Background="{Binding Path=., Converter={StaticResource ColorToBrushConverter}}" Width="{StaticResource ResourceKey=ColorSelectorWidth}" />
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -22,7 +28,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
+
         <!-- Import/Export row-->
         <DockPanel Grid.Row="0">
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left">
@@ -49,7 +55,7 @@
             <ComboBox Grid.Column="0" IsEditable="True" IsReadOnly="True" Text="Search classifications" />
             <ToggleButton Grid.Column="1" Content="Follow Cursor" />
         </Grid>
-        
+
         <!-- Classifications Grid -->
         <DataGrid Grid.Row="2" AutoGenerateColumns="False" ItemsSource="{Binding ClassificationGridItems}" SelectedItem="{Binding SelectedClassification}">
             <DataGrid.Columns>
@@ -97,10 +103,10 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="0" Content="Foreground" />
-                <ComboBox Grid.Row="0" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemForeground}" />
+                <ComboBox Grid.Row="0" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemForeground}" ItemTemplate="{StaticResource ColorSelectorItemTemplate}" />
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Background" />
-                <ComboBox Grid.Row="1" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemBackground}" />
+                <ComboBox Grid.Row="1" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemBackground}" ItemTemplate="{StaticResource ColorSelectorItemTemplate}" />
             </Grid>
 
             <Border Grid.Column="1">
