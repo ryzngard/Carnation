@@ -30,8 +30,20 @@ namespace Carnation
             new ClassificationGridItem("Test Classification 3", Colors.Black, Colors.White, "Content Type Test 3"),
         };
 
+        private static readonly Color[] s_availableColors = new[]
+        {
+            Colors.White,
+            Colors.Red,
+            Colors.Green,
+            Colors.Blue,
+            Colors.Orange,
+            Colors.Pink,
+            Colors.Black
+        };
+
         public ObservableCollection<ClassificationGridItem> ClassificationGridItems { get; } = new ObservableCollection<ClassificationGridItem>(s_defaultClassificationGridItems);
         public ObservableCollection<ItemPropertiesGridItem> ItemPropertiesGridItems { get; } = new ObservableCollection<ItemPropertiesGridItem>(s_defaultPropertiesGridItems);
+        public ObservableCollection<Color> AvailableColors { get; } = new ObservableCollection<Color>(s_availableColors);
 
         private ClassificationGridItem _selectedClassification;
         public ClassificationGridItem SelectedClassification
@@ -62,6 +74,32 @@ namespace Carnation
         }
 
         public ICollectionView ClassificationGridView { get; }
+
+        public Color SelectedItemForeground
+        {
+            get => SelectedClassification?.Foreground ?? Colors.Transparent;
+            set
+            {
+                if (SelectedClassification.Foreground != value)
+                {
+                    SelectedClassification.Foreground = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Color SelectedItemBackground
+        {
+            get => SelectedClassification?.Background ?? Colors.Transparent;
+            set
+            {
+                if (SelectedClassification.Background != value)
+                {
+                    SelectedClassification.Background = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         #endregion
 
         #region Private Methods
@@ -85,6 +123,11 @@ namespace Carnation
 
                 case nameof(SearchText):
                     OnSearchTextChanged();
+                    break;
+
+                case nameof(SelectedClassification):
+                    NotifyPropertyChanged(nameof(SelectedItemBackground));
+                    NotifyPropertyChanged(nameof(SelectedItemForeground));
                     break;
             }
         }

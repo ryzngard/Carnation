@@ -86,7 +86,21 @@
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
-                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Content="Foreground" />
+                <ComboBox Grid.Row="0" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemForeground}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Content="Background" />
+                <ComboBox Grid.Row="1" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemBackground}" />
             </Grid>
 
             <Border Grid.Column="1">
