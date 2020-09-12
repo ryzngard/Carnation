@@ -23,12 +23,12 @@ namespace Carnation
         /// </summary>
         public MainWindow() : base(null)
         {
-            this.Caption = "Carnation";
+            Caption = "Carnation";
 
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
             // the object returned by the Content property.
-            this.Content = new MainWindowControl();
+            Content = new MainWindowControl();
         }
     }
 }

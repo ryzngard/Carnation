@@ -14,8 +14,8 @@ namespace Carnation
         /// </summary>
         public MainWindowControl()
         {
-            this.DataContext = new MainWindowControlViewModel();
-            this.InitializeComponent();
+            DataContext = new MainWindowControlViewModel();
+            InitializeComponent();
         }
     }
 }

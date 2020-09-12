@@ -13,7 +13,7 @@ namespace Carnation
             ClassificationGridView = CollectionViewSource.GetDefaultView(ClassificationGridItems);
             ClassificationGridView.Filter = o => FilterClassification((ClassificationGridItem)o);
 
-            this.PropertyChanged += OnPropertyChanged;
+            PropertyChanged += OnPropertyChanged;
         }
 
         #region Properties
