@@ -180,10 +180,6 @@ csharp_prefer_braces = true:silent
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
 
-# IDE0073: File header
-dotnet_diagnostic.IDE0073.severity = warning
-file_header_template = Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the MIT license.  See License.txt in the project root for license information.
-
 # IDE0035: Remove unreachable code
 dotnet_diagnostic.IDE0035.severity = warning
 
