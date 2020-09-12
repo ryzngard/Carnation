@@ -112,8 +112,13 @@ namespace Carnation
 
         private ImmutableArray<string> GetClassificationNames()
         {
-            var lazyClassificationDefinitions = ComponentModel.DefaultExportProvider.GetExports<ClassificationTypeDefinition>();
-            return lazyClassificationDefinitions.Select(lazyDefinition => lazyDefinition.Value.GetType().GetCustomAttribute<NameAttribute>()?.Name).OfType<string>().Distinct().ToImmutableArray();
+            var editorFormatDefinitions = ComponentModel.DefaultExportProvider.GetExportedValues<EditorFormatDefinition>();
+            return editorFormatDefinitions.Select(definition => definition.GetType())
+                .Where(type => type.GetCustomAttribute<UserVisibleAttribute>()?.UserVisible == true)
+                .Select(type => type.GetCustomAttribute<ClassificationTypeAttribute>()?.ClassificationTypeNames)
+                .OfType<string>()
+                .Distinct()
+                .ToImmutableArray();
         }
     }
 }
