@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Carnation
 {
-    class NotifyPropertyBase : INotifyPropertyChanged
+    internal abstract class NotifyPropertyBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
