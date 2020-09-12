@@ -13,6 +13,7 @@
 
     <UserControl.Resources>
         <local:ValueIsSetVisibilityConverter x:Key="ValueIsSetVisibilityConverter" />
+        <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -50,24 +51,31 @@
         </Grid>
         
         <!-- Classifications Grid -->
-        <DataGrid Grid.Row="2" ItemsSource="{Binding ClassificationGridItems}">
-            <DataGrid.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:ClassificationGridItem}">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+        <DataGrid Grid.Row="2" AutoGenerateColumns="False" ItemsSource="{Binding ClassificationGridItems}" SelectedItem="{Binding SelectedClassification}">
+            <DataGrid.Columns>
+                <DataGridTextColumn 
+                    Header="Classification"
+                    Binding="{Binding Classification}" />
 
-                        <TextBlock Text="{Binding Classification}" />
-                        <TextBlock Text="{Binding Sample}" />
-                        <TextBlock Text="{Binding ContrastRatio}" />
-                        <TextBlock Text="{Binding ContentType}" />
-                    </Grid>
-                </DataTemplate>
-            </DataGrid.ItemTemplate>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>Sample</DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
+                                <TextBlock Text="{Binding Sample}" Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn
+                    Header="Contrast Ratio"
+                    Binding="{Binding ContrastRatio}" />
+
+                <DataGridTextColumn
+                    Header="Content Type"
+                    Binding="{Binding ContentType}" />
+            </DataGrid.Columns>
         </DataGrid>
 
         <!-- Properties Grid -->
@@ -82,20 +90,20 @@
             </Grid>
 
             <Border Grid.Column="1">
-                <DataGrid ItemsSource="{Binding ItemPropertiesGridItems}">
-                    <DataGrid.ItemTemplate>
-                        <DataTemplate DataType="{x:Type local:ItemPropertiesGridItem}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Grid.Column="0" Text="{Binding Text}" />
-                                <TextBlock Grid.Column="1" Text="{Binding ContrastRatio}" />
-                            </Grid>
-                        </DataTemplate>
-                    </DataGrid.ItemTemplate>
+                <DataGrid ItemsSource="{Binding ItemPropertiesGridItems}" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.Header>Sample Backgrounds</DataGridTemplateColumn.Header>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Text}" Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Contrast Ratio" Binding="{Binding ContrastRatio}" />
+                    </DataGrid.Columns>
                 </DataGrid>
             </Border>
         </Grid>

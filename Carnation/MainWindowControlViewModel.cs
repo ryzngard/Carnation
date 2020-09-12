@@ -26,8 +26,8 @@ namespace Carnation
         private static readonly ClassificationGridItem[] s_defaultClassificationGridItems = new[]
         {
             new ClassificationGridItem("Test Classification 1", Colors.White, Colors.Black, "Content Type Test 1"),
-            new ClassificationGridItem("Test Classification 2", Colors.White, Colors.Black, "Content Type Test 2"),
-            new ClassificationGridItem("Test Classification 3", Colors.White, Colors.Black, "Content Type Test 3"),
+            new ClassificationGridItem("Test Classification 2", Colors.White, Colors.Orange, "Content Type Test 2"),
+            new ClassificationGridItem("Test Classification 3", Colors.Black, Colors.White, "Content Type Test 3"),
         };
 
         public ObservableCollection<ClassificationGridItem> ClassificationGridItems { get; } = new ObservableCollection<ClassificationGridItem>(s_defaultClassificationGridItems);

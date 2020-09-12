@@ -2,7 +2,7 @@
 
 namespace Carnation
 {
-    class ClassificationGridItem : NotifyPropertyBase
+    internal class ClassificationGridItem : NotifyPropertyBase
     {
         private string _classification;
         public string Classification

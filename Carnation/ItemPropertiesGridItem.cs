@@ -7,14 +7,14 @@ namespace Carnation
         public string Text => "Sample Text";
 
         private Color _foreground;
-        public Color ForegroundColor
+        public Color Foreground
         {
             get => _foreground;
             set => SetProperty(ref _foreground, value);
         }
 
         private Color _background;
-        public Color BackgroundColor
+        public Color Background
         {
             get => _background;
             set => SetProperty(ref _background, value);
