@@ -67,7 +67,7 @@ namespace Carnation
         #region Private Methods
         private bool FilterClassification(ClassificationGridItem item)
         {
-            if (FollowCursorSelected || item is null)
+            if (FollowCursorSelected || string.IsNullOrEmpty(SearchText) || item is null)
             {
                 return true;
             }
