@@ -1,8 +1,15 @@
-﻿using Microsoft.VisualStudio.Shell;
+﻿using Microsoft.VisualStudio.ComponentModelHost;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text.Classification;
+using Microsoft.VisualStudio.Utilities;
 using System;
+using System.Collections.Immutable;
 using System.ComponentModel.Design;
+using System.Drawing;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
@@ -35,7 +42,7 @@ namespace Carnation
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private MainWindowCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private MainWindowCommand(AsyncPackage package, OleMenuCommandService commandService, IComponentModel componentModel)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -43,6 +50,8 @@ namespace Carnation
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(Execute, menuCommandID);
             commandService.AddCommand(menuItem);
+
+            ComponentModel = componentModel;
         }
 
         /// <summary>
@@ -60,6 +69,10 @@ namespace Carnation
         private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider => package;
 
         /// <summary>
+        /// </summary>
+        private IComponentModel ComponentModel { get; }
+
+        /// <summary>
         /// Initializes the singleton instance of the command.
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
@@ -68,9 +81,9 @@ namespace Carnation
             // Switch to the main thread - the call to AddCommand in MainWindowCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
-
+            var componentModel = (IComponentModel)(await package.GetServiceAsync(typeof(SComponentModel)));
             var commandService = await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
-            Instance = new MainWindowCommand(package, commandService);
+            Instance = new MainWindowCommand(package, commandService, componentModel);
         }
 
         /// <summary>
@@ -91,8 +104,16 @@ namespace Carnation
                 throw new NotSupportedException("Cannot create tool window");
             }
 
+            var classificationNames = GetClassificationNames();
+
             var windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+        }
+
+        private ImmutableArray<string> GetClassificationNames()
+        {
+            var lazyClassificationDefinitions = ComponentModel.DefaultExportProvider.GetExports<ClassificationTypeDefinition>();
+            return lazyClassificationDefinitions.Select(lazyDefinition => lazyDefinition.Value.GetType().GetCustomAttribute<NameAttribute>()?.Name).OfType<string>().Distinct().ToImmutableArray();
         }
     }
 }
