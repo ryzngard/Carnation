@@ -17,6 +17,9 @@ namespace Carnation
 
         public const string guidCarnationPackageCmdSetString = "a432b46a-d8e0-4439-bd9e-58e40c02453c";
         public static Guid guidCarnationPackageCmdSet = new Guid(guidCarnationPackageCmdSetString);
+
+        public const string guidImagesString = "a8692ca5-a187-4742-b0f7-4b3f0d7fe8bc";
+        public static Guid guidImages = new Guid(guidImagesString);
     }
     /// <summary>
     /// Helper class that encapsulates all CommandIDs uses across VS Package.
@@ -24,5 +27,6 @@ namespace Carnation
     internal sealed partial class PackageIds
     {
         public const int MainWindowCommandId = 0x0100;
+        public const int bmpPic1 = 0x0001;
     }
 }

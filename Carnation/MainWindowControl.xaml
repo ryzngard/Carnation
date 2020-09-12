@@ -10,6 +10,10 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
+
+    <UserControl.Resources>
+        <local:ValueIsSetVisibilityConverter x:Key="ValueIsSetVisibilityConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -46,7 +50,7 @@
         </Grid>
         
         <!-- Classifications Grid -->
-        <DataGrid Grid.Row="2">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding ClassificationGridItems}">
             <DataGrid.ItemTemplate>
                 <DataTemplate DataType="{x:Type local:ClassificationGridItem}">
                     <Grid>
@@ -67,7 +71,7 @@
         </DataGrid>
 
         <!-- Properties Grid -->
-        <Grid Grid.Row="3" Visibility="Hidden">
+        <Grid Grid.Row="3" Visibility="{Binding SelectedClassification, Converter={StaticResource ValueIsSetVisibilityConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -78,9 +82,9 @@
             </Grid>
 
             <Border Grid.Column="1">
-                <DataGrid>
+                <DataGrid ItemsSource="{Binding ItemPropertiesGridItems}">
                     <DataGrid.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="{x:Type local:ItemPropertiesGridItem}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />

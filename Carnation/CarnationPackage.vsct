@@ -53,7 +53,7 @@
 
     <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
     <Bitmaps>
-      <Bitmap guid="{a8692ca5-a187-4742-b0f7-4b3f0d7fe8bc}" href="Resources\EditColors.png" />
+      <Bitmap guid="guidImages" href="Resources\EditColors.png" />
     </Bitmaps>
   </Commands>
 
@@ -64,6 +64,10 @@
     <!-- This is the guid used to group the menu commands together -->
     <GuidSymbol name="guidCarnationPackageCmdSet" value="{a432b46a-d8e0-4439-bd9e-58e40c02453c}">
       <IDSymbol name="MainWindowCommandId" value="0x0100" />
+    </GuidSymbol>
+
+    <GuidSymbol name="guidImages" value="{a8692ca5-a187-4742-b0f7-4b3f0d7fe8bc}" >
+      <IDSymbol name="bmpPic1" value="1" />
     </GuidSymbol>
   </Symbols>
 </CommandTable>
