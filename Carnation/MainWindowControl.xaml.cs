@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Controls;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 
 namespace Carnation
@@ -22,6 +23,8 @@ namespace Carnation
 
             _activeWindowTracker = new ActiveWindowTracker();
             _activeWindowTracker.PropertyChanged += ActiveWindowPropertyChanged;
+
+            VSColorTheme.ThemeChanged += _viewModel.OnThemeChanged;
         }
 
         private void ActiveWindowPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -45,6 +48,8 @@ namespace Carnation
 
             _activeWindowTracker?.Dispose();
             _activeWindowTracker = null;
+
+            VSColorTheme.ThemeChanged -= _viewModel.OnThemeChanged;
         }
     }
 }

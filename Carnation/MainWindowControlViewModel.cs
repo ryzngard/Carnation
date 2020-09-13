@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -31,6 +32,12 @@ namespace Carnation
             new ItemPropertiesGridItem(Colors.White, Colors.Black),
             new ItemPropertiesGridItem(Colors.DarkRed, Colors.White)
         };
+
+        internal void OnThemeChanged(ThemeChangedEventArgs _)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            ReloadClassifications();
+        }
 
         internal void OnSelectedSpanChanged(IWpfTextView view, Span? span)
         {
