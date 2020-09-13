@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace Carnation
 {
-    class ValueIsSetVisibilityConverter : IValueConverter
+    internal class ValueIsSetVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             => value is null

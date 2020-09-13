@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
@@ -9,18 +10,32 @@ namespace Carnation
     {
         public static Microsoft.VisualStudio.OLE.Interop.IServiceProvider GlobalServiceProvider { get; set; }
 
-        public static TServiceInterface GetMefService<TServiceInterface>(Microsoft.VisualStudio.OLE.Interop.IServiceProvider serviceProvider = null) where TServiceInterface : class
+        public static TServiceInterface GetMefExport<TServiceInterface>(Microsoft.VisualStudio.OLE.Interop.IServiceProvider serviceProvider = null) where TServiceInterface : class
         {
             serviceProvider = serviceProvider ?? GlobalServiceProvider;
-            TServiceInterface service = null;
+            TServiceInterface value = null;
             var componentModel = GetService<IComponentModel, SComponentModel>(serviceProvider);
 
             if (componentModel != null)
             {
-                service = componentModel.GetService<TServiceInterface>();
+                value = componentModel.DefaultExportProvider.GetExportedValue<TServiceInterface>();
             }
 
-            return service;
+            return value;
+        }
+
+        public static IEnumerable<TServiceInterface> GetMefExports<TServiceInterface>(Microsoft.VisualStudio.OLE.Interop.IServiceProvider serviceProvider = null) where TServiceInterface : class
+        {
+            serviceProvider = serviceProvider ?? GlobalServiceProvider;
+            IEnumerable<TServiceInterface> values = null;
+            var componentModel = GetService<IComponentModel, SComponentModel>(serviceProvider);
+
+            if (componentModel != null)
+            {
+                values = componentModel.DefaultExportProvider.GetExportedValues<TServiceInterface>();
+            }
+
+            return values;
         }
 
         public static TServiceInterface GetService<TServiceInterface, TService>(

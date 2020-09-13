@@ -52,6 +52,7 @@
       <DependentUpon>CarnationPackage.vsct</DependentUpon>
     </Compile>
     <Compile Include="ClassificationGridItem.cs" />
+    <Compile Include="ClassificationHelpers.cs" />
     <Compile Include="ColorHelpers.cs" />
     <Compile Include="ColorItemBase.cs" />
     <Compile Include="ColorToBrushConverter.cs" />

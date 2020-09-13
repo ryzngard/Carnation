@@ -49,7 +49,7 @@ namespace Carnation
                 }
 
                 var foregroundBytes = BitConverter.GetBytes(foregroundColorRef);
-                var foreground = Color. FromRgb(foregroundBytes[0], foregroundBytes[1], foregroundBytes[2]);
+                var foreground = Color.FromRgb(foregroundBytes[0], foregroundBytes[1], foregroundBytes[2]);
 
                 var backgroundColorRef = colorItem.crBackground;
 

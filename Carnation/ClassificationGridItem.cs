@@ -19,7 +19,7 @@ namespace Carnation
             get => _contentType;
             set => SetProperty(ref _contentType, value);
         }
-        
+
         public ClassificationGridItem(
             string classification,
             Color foregroundColor,

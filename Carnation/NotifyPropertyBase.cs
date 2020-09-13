@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Carnation
 {
@@ -12,7 +8,7 @@ namespace Carnation
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName]string name = "")
+        protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string name = "")
         {
             if (EqualityComparer<T>.Default.Equals(field, newValue))
             {
@@ -25,7 +21,7 @@ namespace Carnation
             return true;
         }
 
-        protected void NotifyPropertyChanged([CallerMemberName] string name = "") 
+        protected void NotifyPropertyChanged([CallerMemberName] string name = "")
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

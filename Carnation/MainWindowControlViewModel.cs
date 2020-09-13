@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media;
 using Microsoft.VisualStudio.Text;
@@ -16,6 +18,8 @@ namespace Carnation
             ClassificationGridView.Filter = o => FilterClassification((ClassificationGridItem)o);
 
             PropertyChanged += OnPropertyChanged;
+
+            ReloadClassifications();
         }
 
         #region Properties
@@ -23,13 +27,6 @@ namespace Carnation
         {
             new ItemPropertiesGridItem(Colors.White, Colors.Black),
             new ItemPropertiesGridItem(Colors.DarkRed, Colors.White)
-        };
-
-        private static readonly ClassificationGridItem[] s_defaultClassificationGridItems = new[]
-        {
-            new ClassificationGridItem("Test Classification 1", Colors.White, Colors.Black, "Content Type Test 1"),
-            new ClassificationGridItem("Test Classification 2", Colors.White, Colors.Orange, "Content Type Test 2"),
-            new ClassificationGridItem("Test Classification 3", Colors.Black, Colors.White, "Content Type Test 3"),
         };
 
         internal void OnSelectedSpanChanged(IWpfTextView view, Span? span)
@@ -51,7 +48,7 @@ namespace Carnation
             Colors.Black
         };
 
-        public ObservableCollection<ClassificationGridItem> ClassificationGridItems { get; } = new ObservableCollection<ClassificationGridItem>(s_defaultClassificationGridItems);
+        public ObservableCollection<ClassificationGridItem> ClassificationGridItems { get; } = new ObservableCollection<ClassificationGridItem>();
         public ObservableCollection<ItemPropertiesGridItem> ItemPropertiesGridItems { get; } = new ObservableCollection<ItemPropertiesGridItem>(s_defaultPropertiesGridItems);
         public ObservableCollection<Color> AvailableColors { get; } = new ObservableCollection<Color>(s_availableColors);
 
@@ -113,6 +110,21 @@ namespace Carnation
         #endregion
 
         #region Private Methods
+        private void ReloadClassifications()
+        {
+            var classificationItems = ClassificationHelpers.GetClassificationNames()
+                .Select(FontsAndColorsHelper.TryGetItemForClassification)
+                .OfType<ClassificationGridItem>()
+                .ToImmutableArray();
+
+            ClassificationGridItems.Clear();
+
+            foreach (var classificationItem in classificationItems)
+            {
+                ClassificationGridItems.Add(classificationItem);
+            }
+        }
+
         private bool FilterClassification(ClassificationGridItem item)
         {
             if (FollowCursorSelected || string.IsNullOrEmpty(SearchText) || item is null)
