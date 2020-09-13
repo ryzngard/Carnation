@@ -52,8 +52,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0" IsEditable="True" IsReadOnly="True" Text="{Binding SearchText}" />
-            <ToggleButton x:Name="TrackCursor" Grid.Column="1" Content="Follow Cursor" Click="ToggleButton_Click" />
+            <ComboBox Grid.Column="0" IsEditable="True" Text="{Binding SearchText}" ItemsSource="{Binding ClassificationGridView}"/>
+            <ToggleButton x:Name="TrackCursor" Grid.Column="1" Content="Follow Cursor" IsChecked="{Binding FollowCursorSelected}" />
         </Grid>
 
         <!-- Classifications Grid -->

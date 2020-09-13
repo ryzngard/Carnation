@@ -30,5 +30,8 @@ namespace Carnation
             _classification = classification;
             _contentType = contentType;
         }
+
+        public override string ToString()
+            => Classification;
     }
 }

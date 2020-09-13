@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -14,6 +15,8 @@ namespace Carnation
     {
         public MainWindowControlViewModel()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ClassificationGridView = CollectionViewSource.GetDefaultView(ClassificationGridItems);
             ClassificationGridView.Filter = o => FilterClassification((ClassificationGridItem)o);
 
@@ -31,7 +34,14 @@ namespace Carnation
 
         internal void OnSelectedSpanChanged(IWpfTextView view, Span? span)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             if (span is null || view is null)
+            {
+                return;
+            }
+
+            if (!FollowCursorSelected)
             {
                 return;
             }
@@ -115,6 +125,8 @@ namespace Carnation
         #region Private Methods
         private void ReloadClassifications()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var classificationItems = ClassificationHelpers.GetClassificationNames()
                 .Select(FontsAndColorsHelper.TryGetItemForClassification)
                 .OfType<ClassificationGridItem>()
@@ -130,9 +142,20 @@ namespace Carnation
 
         private bool FilterClassification(ClassificationGridItem item)
         {
-            if (FollowCursorSelected || string.IsNullOrEmpty(SearchText) || item is null)
+            if (string.IsNullOrEmpty(SearchText))
             {
                 return true;
+            }
+
+            if (item is null)
+            {
+                return false;
+            }
+
+            if (FollowCursorSelected)
+            {
+                // If follow cursor is selected, we only want exact matches
+                return item.Classification == SearchText;
             }
 
             return item.Classification.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) != -1;
@@ -165,6 +188,10 @@ namespace Carnation
         private void OnFollowCursorChanged()
         {
             SearchTextEnabled = !FollowCursorSelected;
+            if (FollowCursorSelected)
+            {
+                SearchText = string.Empty;
+            }
         }
         #endregion
     }

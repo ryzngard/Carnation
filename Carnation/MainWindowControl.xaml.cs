@@ -21,19 +21,17 @@ namespace Carnation
             InitializeComponent();
 
             _activeWindowTracker = new ActiveWindowTracker();
-
             _activeWindowTracker.PropertyChanged += ActiveWindowPropertyChanged;
         }
 
         private void ActiveWindowPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             switch (e.PropertyName)
             {
                 case nameof(ActiveWindowTracker.SelectedSpan):
-                    if (TrackCursor.IsChecked == true)
-                    {
-                        _viewModel.OnSelectedSpanChanged(_activeWindowTracker.ActiveWpfTextView, _activeWindowTracker.SelectedSpan);
-                    }
+                    _viewModel.OnSelectedSpanChanged(_activeWindowTracker.ActiveWpfTextView, _activeWindowTracker.SelectedSpan);
                     break;
 
                 case nameof(ActiveWindowTracker.ActiveWpfTextView):
@@ -47,11 +45,6 @@ namespace Carnation
 
             _activeWindowTracker?.Dispose();
             _activeWindowTracker = null;
-        }
-
-        private void ToggleButton_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            _viewModel.SearchText = "";
         }
     }
 }
