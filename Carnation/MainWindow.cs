@@ -23,6 +23,9 @@ namespace Carnation
         /// </summary>
         public MainWindow() : base(null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            VSServiceHelpers.GlobalServiceProvider = (Microsoft.VisualStudio.OLE.Interop.IServiceProvider)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(Microsoft.VisualStudio.OLE.Interop.IServiceProvider));
+
             Caption = "Carnation";
 
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,

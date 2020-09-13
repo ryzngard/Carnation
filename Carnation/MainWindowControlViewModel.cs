@@ -3,10 +3,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace Carnation
 {
-    class MainWindowControlViewModel : NotifyPropertyBase
+    internal class MainWindowControlViewModel : NotifyPropertyBase
     {
         public MainWindowControlViewModel()
         {
@@ -29,6 +31,14 @@ namespace Carnation
             new ClassificationGridItem("Test Classification 2", Colors.White, Colors.Orange, "Content Type Test 2"),
             new ClassificationGridItem("Test Classification 3", Colors.Black, Colors.White, "Content Type Test 3"),
         };
+
+        internal void OnSelectedSpanChanged(IWpfTextView view, Span? span)
+        {
+            if (span is null || view is null)
+            {
+                return;
+            }
+        }
 
         private static readonly Color[] s_availableColors = new[]
         {
