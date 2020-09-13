@@ -54,6 +54,7 @@
     <Compile Include="ColorHelpers.cs" />
     <Compile Include="ColorItemBase.cs" />
     <Compile Include="ColorToBrushConverter.cs" />
+    <Compile Include="FontsAndColorsHelpers.cs" />
     <Compile Include="ItemPropertiesGridItem.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="MainWindowCommand.cs" />

@@ -104,7 +104,18 @@ namespace Carnation
                 throw new NotSupportedException("Cannot create tool window");
             }
 
-            var classificationNames = GetClassificationNames();
+            var classificationItems = GetClassificationNames()
+                .Select(FontsAndColorsHelper.TryGetItemForClassification)
+                .OfType<ClassificationGridItem>()
+                .ToImmutableArray();
+            
+            var model = (MainWindowControlViewModel)((MainWindowControl)window.Content).DataContext;
+            model.ClassificationGridItems.Clear();
+
+            foreach (var classificationItem in classificationItems)
+            {
+                model.ClassificationGridItems.Add(classificationItem);
+            }
 
             var windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
