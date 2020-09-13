@@ -35,6 +35,9 @@ namespace Carnation
             {
                 return;
             }
+
+            var classifications = ClassificationHelpers.GetClassificationsForSpan(view, span.Value);
+            SearchText = classifications.FirstOrDefault();
         }
 
         private static readonly Color[] s_availableColors = new[]
