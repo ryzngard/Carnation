@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Text.Classification;
 
 namespace Carnation
 {
@@ -24,7 +26,20 @@ namespace Carnation
             _activeWindowTracker = new ActiveWindowTracker();
             _activeWindowTracker.PropertyChanged += ActiveWindowPropertyChanged;
 
-            VSColorTheme.ThemeChanged += _viewModel.OnThemeChanged;
+            var classificationFormatMapService = VSServiceHelpers.GetMefExport<IClassificationFormatMapService>();
+            var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap("text");
+            classificationFormatMap.ClassificationFormatMappingChanged += (object s, EventArgs e) => ReloadClassifications();
+
+            VSColorTheme.ThemeChanged += (ThemeChangedEventArgs _) => ReloadClassifications();
+
+            ReloadClassifications();
+
+            void ReloadClassifications()
+            {
+                _viewModel.PlainTextForeground = ((SolidColorBrush)classificationFormatMap.DefaultTextProperties.ForegroundBrush).Color;
+                _viewModel.PlainTextBackground = ((SolidColorBrush)classificationFormatMap.DefaultTextProperties.BackgroundBrush).Color;
+                _viewModel.OnThemeChanged();
+            }
         }
 
         private void ActiveWindowPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -48,8 +63,6 @@ namespace Carnation
 
             _activeWindowTracker?.Dispose();
             _activeWindowTracker = null;
-
-            VSColorTheme.ThemeChanged -= _viewModel.OnThemeChanged;
         }
     }
 }
