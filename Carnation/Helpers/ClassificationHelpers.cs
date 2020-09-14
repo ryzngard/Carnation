@@ -6,22 +6,21 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Tagging;
+using Microsoft.VisualStudio.Utilities;
 
 namespace Carnation
 {
     internal static class ClassificationHelpers
     {
-        public static ImmutableArray<string> GetClassificationNames()
+        public static ImmutableArray<(string, string)> GetClassificationNames()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             return VSServiceHelpers.GetMefExports<EditorFormatDefinition>()
                 .Select(definition => definition.GetType())
                 .Where(type => type.GetCustomAttribute<UserVisibleAttribute>()?.UserVisible == true)
-                .Select(type => type.GetCustomAttribute<ClassificationTypeAttribute>()?.ClassificationTypeNames)
-                .OfType<string>()
-                .Distinct()
+                .Select(type => (type.GetCustomAttribute<ClassificationTypeAttribute>()?.ClassificationTypeNames, type.GetCustomAttribute<NameAttribute>()?.Name))
+                .Where(names => !string.IsNullOrEmpty(names.ClassificationTypeNames) && !string.IsNullOrEmpty(names.Name))
                 .ToImmutableArray();
         }
 

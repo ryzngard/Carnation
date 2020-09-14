@@ -12,6 +12,7 @@
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProjectGuid>{941956C6-D775-40A5-ABC1-FAD32CFB7874}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <LangVersion>8.0</LangVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Carnation</RootNamespace>
     <AssemblyName>Carnation</AssemblyName>
@@ -45,30 +46,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ActiveWindowTracker.cs" />
+    <Compile Include="Models\ActiveWindowTracker.cs" />
+    <Compile Include="Converters\BoolToFontWeightConverter.cs" />
     <Compile Include="CarnationPackage1.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CarnationPackage.vsct</DependentUpon>
     </Compile>
-    <Compile Include="ClassificationGridItem.cs" />
-    <Compile Include="ClassificationHelpers.cs" />
-    <Compile Include="ColorHelpers.cs" />
-    <Compile Include="ColorItemBase.cs" />
-    <Compile Include="ColorToBrushConverter.cs" />
-    <Compile Include="FontsAndColorsHelpers.cs" />
-    <Compile Include="ItemPropertiesGridItem.cs" />
+    <Compile Include="Models\ClassificationGridItem.cs" />
+    <Compile Include="Helpers\ClassificationHelpers.cs" />
+    <Compile Include="Helpers\ColorHelpers.cs" />
+    <Compile Include="Models\ColorItemBase.cs" />
+    <Compile Include="Converters\ColorToBrushConverter.cs" />
+    <Compile Include="Helpers\FontsAndColorsHelpers.cs" />
+    <Compile Include="Models\ItemPropertiesGridItem.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="MainWindowCommand.cs" />
     <Compile Include="MainWindowControl.xaml.cs">
       <DependentUpon>MainWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindowControlViewModel.cs" />
-    <Compile Include="NotifyPropertyBase.cs" />
+    <Compile Include="Models\MainWindowControlViewModel.cs" />
+    <Compile Include="Models\NotifyPropertyBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CarnationPackage.cs" />
-    <Compile Include="ValueIsSetVisibilityConverter.cs" />
-    <Compile Include="VSServiceHelpers.cs" />
+    <Compile Include="Converters\ValueIsSetVisibilityConverter.cs" />
+    <Compile Include="Helpers\VSServiceHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest">

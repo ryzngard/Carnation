@@ -11,24 +11,25 @@ namespace Carnation
             set => SetProperty(ref _classification, value);
         }
 
-        public string Sample => "Sample Text";
-
-        private string _contentType;
-        public string ContentType
+        private string _definitionName;
+        public string DefinitionName
         {
-            get => _contentType;
-            set => SetProperty(ref _contentType, value);
+            get => _definitionName;
+            set => SetProperty(ref _definitionName, value);
         }
+
+        public string Sample => "Sample Text";
 
         public ClassificationGridItem(
             string classification,
+            string definitionName,
             Color foregroundColor,
             Color backgroundColor,
-            string contentType)
-            : base(foregroundColor, backgroundColor)
+            bool isBold)
+            : base(foregroundColor, backgroundColor, isBold)
         {
             _classification = classification;
-            _contentType = contentType;
+            _definitionName = definitionName;
         }
 
         public override string ToString()

@@ -8,8 +8,9 @@ namespace Carnation
 
         public ItemPropertiesGridItem(
             Color foreground,
-            Color background)
-            : base(foreground, background)
+            Color background,
+            bool isBold)
+            : base(foreground, background, isBold)
         {
         }
     }

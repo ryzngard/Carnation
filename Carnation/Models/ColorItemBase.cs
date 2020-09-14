@@ -18,6 +18,13 @@ namespace Carnation
             set => SetProperty(ref _background, value);
         }
 
+        private bool _isBold;
+        public bool IsBold
+        {
+            get => _isBold;
+            set => SetProperty(ref _isBold, value);
+        }
+
         private string _contrastRatio;
         public string ContrastRatio
         {
@@ -25,10 +32,11 @@ namespace Carnation
             set => SetProperty(ref _contrastRatio, value);
         }
 
-        protected ColorItemBase(Color foreground, Color background)
+        protected ColorItemBase(Color foreground, Color background, bool isBold)
         {
             Foreground = foreground;
             Background = background;
+            IsBold = isBold;
 
             ComputeContrastRatio();
 

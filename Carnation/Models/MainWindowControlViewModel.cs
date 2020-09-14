@@ -29,8 +29,8 @@ namespace Carnation
         #region Properties
         private static readonly ItemPropertiesGridItem[] s_defaultPropertiesGridItems = new[]
         {
-            new ItemPropertiesGridItem(Colors.White, Colors.Black),
-            new ItemPropertiesGridItem(Colors.DarkRed, Colors.White)
+            new ItemPropertiesGridItem(Colors.White, Colors.Black, false),
+            new ItemPropertiesGridItem(Colors.DarkRed, Colors.White, true)
         };
 
         internal void OnThemeChanged(ThemeChangedEventArgs _)
@@ -100,6 +100,20 @@ namespace Carnation
             set => SetProperty(ref _searchTextEnabled, value);
         }
 
+        private FontFamily _fontFamily;
+        public FontFamily FontFamily
+        {
+            get => _fontFamily;
+            set => SetProperty(ref _fontFamily, value);
+        }
+
+        private double _fontSize;
+        public double FontSize
+        {
+            get => _fontSize;
+            set => SetProperty(ref _fontSize, value);
+        }
+
         public ICollectionView ClassificationGridView { get; }
 
         public Color SelectedItemForeground
@@ -134,8 +148,10 @@ namespace Carnation
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            var classificationItems = ClassificationHelpers.GetClassificationNames()
-                .Select(FontsAndColorsHelper.TryGetItemForClassification)
+            (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
+
+            var classificationNames = ClassificationHelpers.GetClassificationNames();
+            var classificationItems = classificationNames.Select(FontsAndColorsHelper.TryGetItemForClassification)
                 .OfType<ClassificationGridItem>()
                 .ToImmutableArray();
 
@@ -145,6 +161,9 @@ namespace Carnation
             {
                 ClassificationGridItems.Add(classificationItem);
             }
+
+            ClassificationGridView.SortDescriptions.Clear();
+            ClassificationGridView.SortDescriptions.Add(new SortDescription("Classification", ListSortDirection.Ascending));
         }
 
         private bool FilterClassification(ClassificationGridItem item)

@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <local:ValueIsSetVisibilityConverter x:Key="ValueIsSetVisibilityConverter" />
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <local:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
         <sys:Double x:Key="ColorSelectorWidth">30</sys:Double>
 
         <DataTemplate DataType="{x:Type Color}" x:Key="ColorSelectorItemTemplate">
@@ -57,18 +58,48 @@
         </Grid>
 
         <!-- Classifications Grid -->
-        <DataGrid Grid.Row="2" AutoGenerateColumns="False" ItemsSource="{Binding ClassificationGridItems}" SelectedItem="{Binding SelectedClassification}">
+        <DataGrid Grid.Row="2"  AutoGenerateColumns="False" ItemsSource="{Binding ClassificationGridItems}" SelectedItem="{Binding SelectedClassification}">
             <DataGrid.Columns>
                 <DataGridTextColumn 
                     Header="Classification"
                     Binding="{Binding Classification}" />
 
                 <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>Foreground</DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Background="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>Background</DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridCheckBoxColumn 
+                    Header="IsBold"
+                    IsReadOnly="True"
+                    Binding="{Binding IsBold}" />
+
+                <DataGridTemplateColumn>
                     <DataGridTemplateColumn.Header>Sample</DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
-                                <TextBlock Text="{Binding Sample}" Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" />
+                                <TextBlock Text="{Binding Sample}" 
+                                           Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}"
+                                           Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                           FontFamily="{Binding Path=DataContext.FontFamily , RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}" 
+                                           FontSize="{Binding Path=DataContext.FontFamily , RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                                           FontWeight="{Binding IsBold, Converter={StaticResource BoolToFontWeightConverter}, Mode=OneWay}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -77,10 +108,6 @@
                 <DataGridTextColumn
                     Header="Contrast Ratio"
                     Binding="{Binding ContrastRatio}" />
-
-                <DataGridTextColumn
-                    Header="Content Type"
-                    Binding="{Binding ContentType}" />
             </DataGrid.Columns>
         </DataGrid>
 
@@ -95,6 +122,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -107,6 +135,9 @@
 
                 <Label Grid.Row="1" Grid.Column="0" Content="Background" />
                 <ComboBox Grid.Row="1" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemBackground}" ItemTemplate="{StaticResource ColorSelectorItemTemplate}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Content="IsBold" />
+                <CheckBox Grid.Row="2" Grid.Column="1" IsEnabled="False" IsChecked="{Binding SelectedClassification.IsBold}" />
             </Grid>
 
             <Border Grid.Column="1">
