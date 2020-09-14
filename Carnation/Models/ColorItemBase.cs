@@ -2,7 +2,7 @@
 
 namespace Carnation
 {
-    internal abstract class ColorItemBase : NotifyPropertyBase
+    public abstract class ColorItemBase : NotifyPropertyBase
     {
         private Color _foreground;
         public Color Foreground

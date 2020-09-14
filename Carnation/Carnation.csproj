@@ -46,6 +46,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ColorPicker\ColorPicker.xaml.cs">
+      <DependentUpon>ColorPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ColorPicker\ColorPickerViewModel.cs" />
+    <Compile Include="ColorPicker\ColorPickerWindow.xaml.cs">
+      <DependentUpon>ColorPickerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ColorPicker\HuePicker.xaml.cs">
+      <DependentUpon>HuePicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ColorPicker\SaturationBrightnessPicker.xaml.cs">
+      <DependentUpon>SaturationBrightnessPicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\HueToColorConverter.cs" />
+    <Compile Include="Converters\PercentConverter.cs" />
+    <Compile Include="Helpers\ControlExtensions.cs" />
     <Compile Include="Models\ActiveWindowTracker.cs" />
     <Compile Include="Converters\BoolToFontWeightConverter.cs" />
     <Compile Include="CarnationPackage1.cs">
@@ -67,6 +83,7 @@
     </Compile>
     <Compile Include="Models\MainWindowControlViewModel.cs" />
     <Compile Include="Models\NotifyPropertyBase.cs" />
+    <Compile Include="Models\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CarnationPackage.cs" />
     <Compile Include="Converters\ValueIsSetVisibilityConverter.cs" />
@@ -101,6 +118,22 @@
     <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.8.2025" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ColorPicker\ColorPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ColorPicker\ColorPickerWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ColorPicker\HuePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ColorPicker\SaturationBrightnessPicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -118,6 +151,7 @@
       <LastGenOutput>CarnationPackage1.cs</LastGenOutput>
     </VSCTCompile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

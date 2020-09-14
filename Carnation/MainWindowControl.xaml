@@ -27,7 +27,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!-- Import/Export row-->
@@ -68,8 +67,11 @@
                     <DataGridTemplateColumn.Header>Foreground</DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Background="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
-                            </StackPanel>
+                            <Button
+                                Background="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                Content=""
+                                Command="{Binding ElementName=MyToolWindow, Path=DataContext.EditForegroundCommand}" 
+                                CommandParameter="{Binding Path=.}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -78,8 +80,11 @@
                     <DataGridTemplateColumn.Header>Background</DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
-                            </StackPanel>
+                            <Button
+                                Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
+                                Content=""
+                                Command="{Binding ElementName=MyToolWindow, Path=DataContext.EditBackgroundCommand}" 
+                                CommandParameter="{Binding Path=.}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -110,53 +115,5 @@
                     Binding="{Binding ContrastRatio}" />
             </DataGrid.Columns>
         </DataGrid>
-
-        <!-- Properties Grid -->
-        <Grid Grid.Row="3" Visibility="{Binding SelectedClassification, Converter={StaticResource ValueIsSetVisibilityConverter}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-
-                <Label Grid.Row="0" Grid.Column="0" Content="Foreground" />
-                <ComboBox Grid.Row="0" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemForeground}" ItemTemplate="{StaticResource ColorSelectorItemTemplate}" />
-
-                <Label Grid.Row="1" Grid.Column="0" Content="Background" />
-                <ComboBox Grid.Row="1" Grid.Column="1"  IsReadOnly="True" IsEditable="False" ItemsSource="{Binding AvailableColors}" SelectedItem="{Binding SelectedItemBackground}" ItemTemplate="{StaticResource ColorSelectorItemTemplate}" />
-
-                <Label Grid.Row="2" Grid.Column="0" Content="IsBold" />
-                <CheckBox Grid.Row="2" Grid.Column="1" IsEnabled="False" IsChecked="{Binding SelectedClassification.IsBold}" />
-            </Grid>
-
-            <Border Grid.Column="1">
-                <DataGrid ItemsSource="{Binding ItemPropertiesGridItems}" AutoGenerateColumns="False">
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn>
-                            <DataGridTemplateColumn.Header>Sample Backgrounds</DataGridTemplateColumn.Header>
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Text}" Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="Contrast Ratio" Binding="{Binding ContrastRatio}" />
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>
-        </Grid>
     </Grid>
 </UserControl>

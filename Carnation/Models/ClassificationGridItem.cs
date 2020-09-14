@@ -2,7 +2,7 @@
 
 namespace Carnation
 {
-    internal class ClassificationGridItem : ColorItemBase
+    public class ClassificationGridItem : ColorItemBase
     {
         private string _classification;
         public string Classification

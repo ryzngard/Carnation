@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
@@ -23,6 +24,9 @@ namespace Carnation
 
             PropertyChanged += OnPropertyChanged;
 
+            EditForegroundCommand = new RelayCommand<ClassificationGridItem>(OnEditForeground);
+            EditBackgroundCommand = new RelayCommand<ClassificationGridItem>(OnEditBackground);
+
             ReloadClassifications();
         }
 
@@ -32,30 +36,6 @@ namespace Carnation
             new ItemPropertiesGridItem(Colors.White, Colors.Black, false),
             new ItemPropertiesGridItem(Colors.DarkRed, Colors.White, true)
         };
-
-        internal void OnThemeChanged(ThemeChangedEventArgs _)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            ReloadClassifications();
-        }
-
-        internal void OnSelectedSpanChanged(IWpfTextView view, Span? span)
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            if (span is null || view is null)
-            {
-                return;
-            }
-
-            if (!FollowCursorSelected)
-            {
-                return;
-            }
-
-            var classifications = ClassificationHelpers.GetClassificationsForSpan(view, span.Value);
-            SearchText = classifications.FirstOrDefault();
-        }
 
         private static readonly Color[] s_availableColors = new[]
         {
@@ -141,6 +121,35 @@ namespace Carnation
                 }
             }
         }
+
+        public ICommand EditForegroundCommand { get; }
+        public ICommand EditBackgroundCommand { get; }
+        #endregion
+
+        #region Public Methods
+        public void OnThemeChanged(ThemeChangedEventArgs _)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            ReloadClassifications();
+        }
+
+        public void OnSelectedSpanChanged(IWpfTextView view, Span? span)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            if (span is null || view is null)
+            {
+                return;
+            }
+
+            if (!FollowCursorSelected)
+            {
+                return;
+            }
+
+            var classifications = ClassificationHelpers.GetClassificationsForSpan(view, span.Value);
+            SearchText = classifications.FirstOrDefault();
+        }
         #endregion
 
         #region Private Methods
@@ -218,6 +227,27 @@ namespace Carnation
             {
                 SearchText = string.Empty;
             }
+        }
+
+        private void OnEditForeground(ClassificationGridItem item)
+        {
+            item.Foreground = ShowColorPicker(item.Foreground);
+        }
+
+        private void OnEditBackground(ClassificationGridItem item)
+        {
+            item.Background = ShowColorPicker(item.Background);
+        }
+
+        private Color ShowColorPicker(Color color)
+        {
+            var window = new ColorPickerWindow(color);
+            if (window.ShowDialog() == true)
+            {
+                return window.Color;
+            }
+
+            return color;
         }
         #endregion
     }
