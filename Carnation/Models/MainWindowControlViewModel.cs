@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -26,8 +25,6 @@ namespace Carnation
 
             EditForegroundCommand = new RelayCommand<ClassificationGridItem>(OnEditForeground);
             EditBackgroundCommand = new RelayCommand<ClassificationGridItem>(OnEditBackground);
-
-            ReloadClassifications();
         }
 
         #region Properties
@@ -80,6 +77,20 @@ namespace Carnation
             set => SetProperty(ref _searchTextEnabled, value);
         }
 
+        private Color _plainTextForeground;
+        public Color PlainTextForeground
+        {
+            get => _plainTextForeground;
+            set => SetProperty(ref _plainTextForeground, value);
+        }
+
+        private Color _plainTextBackground;
+        public Color PlainTextBackground
+        {
+            get => _plainTextBackground;
+            set => SetProperty(ref _plainTextBackground, value);
+        }
+
         private FontFamily _fontFamily;
         public FontFamily FontFamily
         {
@@ -127,7 +138,7 @@ namespace Carnation
         #endregion
 
         #region Public Methods
-        public void OnThemeChanged(ThemeChangedEventArgs _)
+        public void OnThemeChanged()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             ReloadClassifications();
@@ -159,8 +170,8 @@ namespace Carnation
 
             (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
 
-            var classificationNames = ClassificationHelpers.GetClassificationNames();
-            var classificationItems = classificationNames.Select(FontsAndColorsHelper.TryGetItemForClassification)
+            var classificationItems = ClassificationHelpers.GetClassificationNames()
+                .Select(names => FontsAndColorsHelper.TryGetItemForClassification(names, PlainTextForeground, PlainTextBackground))
                 .OfType<ClassificationGridItem>()
                 .ToImmutableArray();
 

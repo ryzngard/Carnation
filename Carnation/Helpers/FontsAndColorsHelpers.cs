@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows;
 using System.Windows.Media;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
@@ -31,25 +30,32 @@ namespace Carnation
                 return DefaultFontInfo;
             }
 
-            var logFont = new LOGFONTW[1];
-            var fontInfo = new FontInfo[1];
-            if (fontsAndColorStorage.GetFont(logFont, fontInfo) != VSConstants.S_OK)
+            try
             {
-                return DefaultFontInfo;
+                var logFont = new LOGFONTW[1];
+                var fontInfo = new FontInfo[1];
+                if (fontsAndColorStorage.GetFont(logFont, fontInfo) != VSConstants.S_OK)
+                {
+                    return DefaultFontInfo;
+                }
+
+                var fontFamily = fontInfo[0].bFaceNameValid == 1
+                    ? new FontFamily(fontInfo[0].bstrFaceName)
+                    : DefaultFontFamily;
+
+                var fontSize = fontInfo[0].bPointSizeValid == 1
+                    ? Math.Abs(logFont[0].lfHeight)
+                    : DefaultFontSize;
+
+                return (fontFamily, fontSize);
             }
-
-            var fontFamily = fontInfo[0].bFaceNameValid == 1
-                ? new FontFamily(fontInfo[0].bstrFaceName)
-                : DefaultFontFamily;
-
-            var fontSize = fontInfo[0].bPointSizeValid == 1
-                ? Math.Abs(logFont[0].lfHeight)
-                : DefaultFontSize;
-
-            return (fontFamily, fontSize);
+            finally
+            {
+                fontsAndColorStorage.CloseCategory();
+            }
         }
 
-        public static ClassificationGridItem TryGetItemForClassification((string, string) classificationTypeNames)
+        public static ClassificationGridItem TryGetItemForClassification((string, string) classificationTypeNames, Color defaultForeground, Color defaultBackground)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -80,13 +86,13 @@ namespace Carnation
                 var colorItem = colorItems[0];
                 var fontAndColorUtilities = (IVsFontAndColorUtilities)fontsAndColorStorage;
 
-                var foreground = TryGetColor(colorItem.crForeground, fontAndColorUtilities);
+                var foreground = TryGetColor(colorItem.crForeground, fontAndColorUtilities, defaultForeground);
                 if (foreground == null)
                 {
                     return null;
                 }
 
-                var background = TryGetColor(colorItem.crBackground, fontAndColorUtilities);
+                var background = TryGetColor(colorItem.crBackground, fontAndColorUtilities, defaultBackground);
                 if (background == null)
                 {
                     return null;
@@ -102,7 +108,7 @@ namespace Carnation
             }
         }
 
-        private static Color? TryGetColor(uint colorRef, IVsFontAndColorUtilities fontAndColorUtilities)
+        private static Color? TryGetColor(uint colorRef, IVsFontAndColorUtilities fontAndColorUtilities, Color? defaultColor)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -113,7 +119,11 @@ namespace Carnation
 
             uint? win32Color = null;
 
-            if (colorType == (int)__VSCOLORTYPE.CT_RAW)
+            if (colorType == (int)__VSCOLORTYPE.CT_INVALID)
+            {
+                return defaultColor;
+            }
+            else if (colorType == (int)__VSCOLORTYPE.CT_RAW)
             {
                 win32Color = colorRef;
             }
