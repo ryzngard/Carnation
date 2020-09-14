@@ -30,6 +30,18 @@ namespace Carnation
         {
             _classification = classification;
             _definitionName = definitionName;
+
+            PropertyChanged += (s, o) =>
+            {
+                switch (o.PropertyName)
+                {
+                    case nameof(Foreground):
+                    case nameof(Background):
+                    case nameof(IsBold):
+                        FontsAndColorsHelper.SaveClassificationItem(this);
+                        break;
+                }
+            };
         }
 
         public override string ToString()

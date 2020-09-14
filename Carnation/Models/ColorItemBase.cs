@@ -34,9 +34,9 @@ namespace Carnation
 
         protected ColorItemBase(Color foreground, Color background, bool isBold)
         {
-            Foreground = foreground;
-            Background = background;
-            IsBold = isBold;
+            _foreground = foreground;
+            _background = background;
+            _isBold = isBold;
 
             ComputeContrastRatio();
 

@@ -61,6 +61,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn 
                     Header="Classification"
+                    IsReadOnly="True"
                     Binding="{Binding Classification}" />
 
                 <DataGridTemplateColumn>
@@ -91,7 +92,6 @@
 
                 <DataGridCheckBoxColumn 
                     Header="IsBold"
-                    IsReadOnly="True"
                     Binding="{Binding IsBold}" />
 
                 <DataGridTemplateColumn>
@@ -112,6 +112,7 @@
 
                 <DataGridTextColumn
                     Header="Contrast Ratio"
+                    IsReadOnly="True"
                     Binding="{Binding ContrastRatio}" />
             </DataGrid.Columns>
         </DataGrid>
