@@ -159,7 +159,7 @@ namespace Carnation
             }
 
             var classifications = ClassificationHelpers.GetClassificationsForSpan(view, span.Value);
-            SearchText = classifications.FirstOrDefault();
+            SearchText = string.Join("; ", classifications);
         }
         #endregion
 
@@ -200,8 +200,13 @@ namespace Carnation
 
             if (FollowCursorSelected)
             {
+                var classifications = SearchText.Split(';')
+                    .Select(name => name.Trim())
+                    .Where(name => !string.IsNullOrEmpty(name))
+                    .ToLookup(name => name);
+
                 // If follow cursor is selected, we only want exact matches
-                return item.Classification == SearchText;
+                return classifications.Contains(item.Classification);
             }
 
             return item.Classification.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) != -1;

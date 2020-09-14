@@ -27,7 +27,7 @@ namespace Carnation
             _activeWindowTracker.PropertyChanged += ActiveWindowPropertyChanged;
 
             var classificationFormatMapService = VSServiceHelpers.GetMefExport<IClassificationFormatMapService>();
-            var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap("text");
+            var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap("Text Editor MEF Items");
             classificationFormatMap.ClassificationFormatMappingChanged += (object s, EventArgs e) => ReloadClassifications();
 
             VSColorTheme.ThemeChanged += (ThemeChangedEventArgs _) => ReloadClassifications();
