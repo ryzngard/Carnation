@@ -145,11 +145,12 @@
                 AutomationProperties.LiveSetting="Polite" />
 
             <Label Content="Hex" Grid.Row="3" Grid.Column="0" x:Name="HexLabel" />
-            <TextBlock 
-                Text="{Binding CurrentEditorColor.Color}" 
+            <TextBox 
+                Text="{Binding CurrentEditorColor.Hex}" 
                 Grid.Row="3" 
                 Grid.Column="1" 
-                Focusable="False" 
+                GotFocus="SelectAllText"
+                AutomationProperties.Name="Hex"
                 AutomationProperties.LiveSetting="Polite" 
                 AutomationProperties.LabeledBy="{Binding ElementName=HexLabel}" />
 

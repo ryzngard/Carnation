@@ -1,4 +1,6 @@
-﻿using System.Windows.Media;
+﻿using System.Globalization;
+using System.IO;
+using System.Windows.Media;
 
 namespace Carnation.Models
 {
@@ -25,6 +27,38 @@ namespace Carnation.Models
                 if (_updateBehavior != UpdateBehavior.FromComponent)
                 {
                     UpdateColorComponents();
+                }
+            }
+        }
+
+        private string _hex;
+        public string Hex
+        {
+            get => _hex;
+            set
+            {
+                var str = value.StartsWith("#")
+                    ? value
+                    : "#" + value;
+
+                if (!SetProperty(ref _hex, str))
+                {
+                    return;
+                }
+
+                // Accept either ARGB or RGB hex values, +1 for the # 
+                var isValidLength = _hex.Length == 9 || _hex.Length == 7;
+
+                if (isValidLength && uint.TryParse(str.TrimStart('#'), NumberStyles.HexNumber, CultureInfo.CurrentCulture.NumberFormat, out var argb))
+                {
+                    if (_updateBehavior == UpdateBehavior.None)
+                    {
+                        Color = ColorHelpers.ToColor(argb);
+                    }
+                }
+                else
+                {
+                    throw new InvalidDataException($"{value} is not a valid hex color value");
                 }
             }
         }
@@ -145,6 +179,7 @@ namespace Carnation.Models
             Hue = ColorHelpers.GetHue(Color);
             Saturation = ColorHelpers.GetSaturation(Color);
             Brightness = ColorHelpers.GetSaturation(Color);
+            Hex = Color.ToString();
 
             _updateBehavior = UpdateBehavior.None;
         }
@@ -157,6 +192,7 @@ namespace Carnation.Models
             Red = Color.R;
             Green = Color.G;
             Blue = Color.B;
+            Hex = Color.ToString();
 
             _updateBehavior = UpdateBehavior.None;
         }
@@ -171,6 +207,7 @@ namespace Carnation.Models
             Hue = ColorHelpers.GetHue(Color);
             Saturation = ColorHelpers.GetSaturation(Color);
             Brightness = ColorHelpers.GetSaturation(Color);
+            Hex = Color.ToString();
 
             _updateBehavior = UpdateBehavior.None;
         }
