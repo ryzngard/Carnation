@@ -2,13 +2,14 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.VisualStudio.PlatformUI;
 
 namespace Carnation
 {
     /// <summary>
     /// Interaction logic for ColorPickerWindow.xaml
     /// </summary>
-    public partial class ColorPickerWindow : Window
+    public partial class ColorPickerWindow : DialogWindow
     {
         public Color ForegroundColor => ColorPicker.ForegroundColor;
         public Color BackgroundColor => ColorPicker.BackgroundColor;
