@@ -25,6 +25,7 @@ namespace Carnation
 
             EditForegroundCommand = new RelayCommand<ClassificationGridItem>(OnEditForeground);
             EditBackgroundCommand = new RelayCommand<ClassificationGridItem>(OnEditBackground);
+            UseItemDefaultsCommand = new RelayCommand<ClassificationGridItem>(OnUseItemDefaults);
         }
 
         #region Properties
@@ -135,6 +136,7 @@ namespace Carnation
 
         public ICommand EditForegroundCommand { get; }
         public ICommand EditBackgroundCommand { get; }
+        public ICommand UseItemDefaultsCommand { get; }
         #endregion
 
         #region Public Methods
@@ -168,6 +170,7 @@ namespace Carnation
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
+            (PlainTextForeground, PlainTextBackground) = FontsAndColorsHelper.GetPlainTextColors();
             (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
 
             var classificationItems = ClassificationHelpers.GetClassificationNames()
@@ -245,6 +248,11 @@ namespace Carnation
             }
         }
 
+        private void OnUseItemDefaults(ClassificationGridItem item)
+        {
+            FontsAndColorsHelper.ResetClassificationItem(item, PlainTextForeground, PlainTextBackground);
+        }
+
         private void OnEditForeground(ClassificationGridItem item)
         {
             ShowColorPicker(item);
@@ -254,6 +262,7 @@ namespace Carnation
         {
             ShowColorPicker(item, true);
         }
+
 
         private void ShowColorPicker(ClassificationGridItem item, bool editBackground = false)
         {
