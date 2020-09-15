@@ -14,6 +14,7 @@
     <UserControl.Resources>
         <local:PercentConverter x:Key="PercentConverter" />
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <local:ContrastRatioConverter x:Key="ContrastRatioConverter" />
 
         <!-- 
             The ThemedDialogTextBoxStyleKey has an exception introduced when it's used. ErrorTemplate and ThemedDialogTextBoxStyle can be removed once the bug is fixed
@@ -105,6 +106,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <!-- Use Polite LiveSettings for values that will change so that screen readers will read off their changes, but not interrupt any current notification being read -->
@@ -182,8 +184,16 @@
                 </Rectangle.Fill>
             </Rectangle>
 
-            <StackPanel 
+            <Label Grid.Row="8" Grid.Column="0" Content="Contrast Ratio" x:Name="ContrastRatioLabel" />
+            <TextBlock
+                Text="{Binding ContrastRatio, Converter={StaticResource ContrastRatioConverter}}" 
                 Grid.Row="8" 
+                Grid.Column="1" 
+                AutomationProperties.LiveSetting="Polite" 
+                AutomationProperties.LabeledBy="{Binding ElementName=ContrastRatioLabel}" />
+            
+            <StackPanel 
+                Grid.Row="9" 
                 Grid.Column="0" 
                 Grid.ColumnSpan="2" 
                 Orientation="Horizontal" 

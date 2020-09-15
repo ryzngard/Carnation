@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using Carnation.Models;
 
 namespace Carnation
@@ -10,6 +11,26 @@ namespace Carnation
             ForegroundColor = new ObservableColor(Colors.Transparent);
             BackgroundColor = new ObservableColor(Colors.Transparent);
             CurrentEditorColor = ForegroundColor;
+
+            ForegroundColor.PropertyChanged += ForegroundColor_PropertyChanged;
+            BackgroundColor.PropertyChanged += BackgroundColor_PropertyChanged;
+
+            CalculateContrast();
+        }
+
+        private void CalculateContrast()
+        {
+            ContrastRatio = ColorHelpers.GetContrast(ForegroundColor.Color, BackgroundColor.Color);
+        }
+
+        private void BackgroundColor_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            CalculateContrast();
+        }
+
+        private void ForegroundColor_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            CalculateContrast();
         }
 
         private ObservableColor _currentEditorColor;
@@ -31,6 +52,13 @@ namespace Carnation
         {
             get => _foregroundColor;
             set => SetProperty(ref _foregroundColor, value);
+        }
+
+        private double _contrastRatio;
+        public double ContrastRatio
+        {
+            get => _contrastRatio;
+            set => SetProperty(ref _contrastRatio, value);
         }
 
         public void SetForegroundColor(Color color)
