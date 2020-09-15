@@ -32,6 +32,13 @@ namespace Carnation
             set => SetProperty(ref _contrastRatio, value);
         }
 
+        private string _contrastRating;
+        public string ContrastRating
+        {
+            get => _contrastRating;
+            set => SetProperty(ref _contrastRating, value);
+        }
+
         protected ColorItemBase(Color foreground, Color background, bool isBold)
         {
             _foreground = foreground;
@@ -54,7 +61,30 @@ namespace Carnation
 
         private void ComputeContrastRatio()
         {
-            ContrastRatio = $"{ColorHelpers.GetContrast(Foreground, Background):N2} : 1";
+            var contrast = ColorHelpers.GetContrast(Foreground, Background);
+            ContrastRatio = $"{contrast:N2}";
+            ContrastRating = GetContrastSymbol(contrast);
+            return;
+
+            string GetContrastSymbol(double contrast)
+            {
+                if (contrast < 3)
+                {
+                    return "❌";
+                }
+                else if (contrast < 4.5)
+                {
+                    return "⚠️";
+                }
+                else if (contrast < 7)
+                {
+                    return "AA";
+                }
+                else
+                {
+                    return "AAA";
+                }
+            }
         }
     }
 }

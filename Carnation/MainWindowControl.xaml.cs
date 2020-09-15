@@ -27,7 +27,7 @@ namespace Carnation
             _activeWindowTracker.PropertyChanged += ActiveWindowPropertyChanged;
 
             var classificationFormatMapService = VSServiceHelpers.GetMefExport<IClassificationFormatMapService>();
-            var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap("Text Editor MEF Items");
+            var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap("text");
             classificationFormatMap.ClassificationFormatMappingChanged += (object s, EventArgs e) => ReloadClassifications();
 
             VSColorTheme.ThemeChanged += (ThemeChangedEventArgs _) => ReloadClassifications();
@@ -36,8 +36,6 @@ namespace Carnation
 
             void ReloadClassifications()
             {
-                _viewModel.PlainTextForeground = ((SolidColorBrush)classificationFormatMap.DefaultTextProperties.ForegroundBrush).Color;
-                _viewModel.PlainTextBackground = ((SolidColorBrush)classificationFormatMap.DefaultTextProperties.BackgroundBrush).Color;
                 _viewModel.OnThemeChanged();
             }
         }

@@ -31,6 +31,12 @@ namespace Carnation
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
+            // If the cursor is after the last character return empty array.
+            if (span.Start == view.TextBuffer.CurrentSnapshot.Length)
+            {
+                return ImmutableArray<string>.Empty;
+            }
+
             // The span to classify must have a length.
             var snapshotSpan = span.Length == 0
                 ? new SnapshotSpan(view.TextSnapshot, span.Start, 1)
