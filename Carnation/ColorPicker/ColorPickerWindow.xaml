@@ -23,9 +23,7 @@
 
         <local:ColorPicker 
             Grid.Row="0" 
-            x:Name="ColorPicker" 
-            Color="{Binding Color}" 
-            OriginalColor="{Binding Color, Mode=OneTime}" />
+            x:Name="ColorPicker" />
         
         <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0, 0, 10, 5">
             <StackPanel.Resources>

@@ -247,23 +247,22 @@ namespace Carnation
 
         private void OnEditForeground(ClassificationGridItem item)
         {
-            item.Foreground = ShowColorPicker(item.Foreground);
+            ShowColorPicker(item);
         }
 
         private void OnEditBackground(ClassificationGridItem item)
         {
-            item.Background = ShowColorPicker(item.Background);
+            ShowColorPicker(item, true);
         }
 
-        private Color ShowColorPicker(Color color)
+        private void ShowColorPicker(ClassificationGridItem item, bool editBackground = false)
         {
-            var window = new ColorPickerWindow(color);
+            var window = new ColorPickerWindow(item.Foreground, item.Background, editBackground: editBackground);
             if (window.ShowDialog() == true)
             {
-                return window.Color;
+                item.Foreground = window.ForegroundColor;
+                item.Background = window.BackgroundColor;
             }
-
-            return color;
         }
         #endregion
     }

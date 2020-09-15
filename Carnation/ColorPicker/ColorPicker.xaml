@@ -13,6 +13,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
         <local:PercentConverter x:Key="PercentConverter" />
+        <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
 
         <!-- 
             The ThemedDialogTextBoxStyleKey has an exception introduced when it's used. ErrorTemplate and ThemedDialogTextBoxStyle can be removed once the bug is fixed
@@ -52,13 +53,13 @@
             <local:SaturationBrightnessPicker 
                 DockPanel.Dock="Left"
                 Width="500"
-                Hue="{Binding Hue, Mode=OneWay}"
-                Saturation="{Binding Saturation, Mode=TwoWay}"
-                Brightness="{Binding Brightness, Mode=TwoWay}" />
+                Hue="{Binding CurrentEditorColor.Hue, Mode=OneWay}"
+                Saturation="{Binding CurrentEditorColor.Saturation, Mode=TwoWay}"
+                Brightness="{Binding CurrentEditorColor.Brightness, Mode=TwoWay}" />
 
             <local:HuePicker 
                 DockPanel.Dock="Left"
-                Hue="{Binding Hue, Mode=TwoWay}" 
+                Hue="{Binding CurrentEditorColor.Hue, Mode=TwoWay}" 
                 Width="50"
                 Margin="5, 0, 5, 0" />
         </DockPanel>
@@ -111,7 +112,7 @@
             <Label Content="Red" Grid.Row="0" Grid.Column="0" x:Name="RedLabel" />
             <TextBox
                 x:Name="Red"
-                Text="{Binding Red}" 
+                Text="{Binding CurrentEditorColor.Red}" 
                 Grid.Row="0" 
                 Grid.Column="1" 
                 GotFocus="SelectAllText"
@@ -122,7 +123,7 @@
             <Label Content="Green" Grid.Row="1" Grid.Column="0" x:Name="GreenLabel" />
             <TextBox 
                 x:Name="Green"
-                Text="{Binding Green}" 
+                Text="{Binding CurrentEditorColor.Green}" 
                 Grid.Row="1" 
                 Grid.Column="1" 
                 GotFocus="SelectAllText"
@@ -133,7 +134,7 @@
             <Label Content="Blue" Grid.Row="2" Grid.Column="0" x:Name="BlueLabel" />
             <TextBox 
                 x:Name="Blue"
-                Text="{Binding Blue}" 
+                Text="{Binding CurrentEditorColor.Blue}" 
                 Grid.Row="2" 
                 Grid.Column="1" 
                 GotFocus="SelectAllText"
@@ -143,7 +144,7 @@
 
             <Label Content="Hex" Grid.Row="3" Grid.Column="0" x:Name="HexLabel" />
             <TextBlock 
-                Text="{Binding Color}" 
+                Text="{Binding CurrentEditorColor.Color}" 
                 Grid.Row="3" 
                 Grid.Column="1" 
                 Focusable="False" 
@@ -152,7 +153,7 @@
 
             <Label Content="Hue" Grid.Row="4" Grid.Column="0" x:Name="HueLabel"/>
             <TextBlock 
-                Text="{Binding Hue, StringFormat=N2}" 
+                Text="{Binding CurrentEditorColor.Hue, StringFormat=N2}" 
                 Grid.Row="4" 
                 Grid.Column="1" 
                 AutomationProperties.LiveSetting="Polite" 
@@ -160,7 +161,7 @@
 
             <Label Content="Saturation" Grid.Row="5" Grid.Column="0" x:Name="SaturationLabel"/>
             <TextBlock 
-                Text="{Binding Saturation, Converter={StaticResource PercentConverter}}" 
+                Text="{Binding CurrentEditorColor.Saturation, Converter={StaticResource PercentConverter}}" 
                 Grid.Row="5" 
                 Grid.Column="1" 
                 AutomationProperties.LiveSetting="Polite" 
@@ -168,25 +169,32 @@
 
             <Label Content="Brightness" Grid.Row="6" Grid.Column="0" x:Name="BrightnessLabel"/>
             <TextBlock 
-                Text="{Binding Brightness, Converter={StaticResource PercentConverter}}" 
+                Text="{Binding CurrentEditorColor.Brightness, Converter={StaticResource PercentConverter}}" 
                 Grid.Row="6" 
                 Grid.Column="1" 
                 AutomationProperties.LiveSetting="Polite" 
                 AutomationProperties.LabeledBy="{Binding ElementName=BrightnessLabel}" />
 
-            <Label Content="Original Color" Grid.Row="7" Grid.Column="0" x:Name="OriginalColorLabel" />
-            <Rectangle Grid.Row="7" Grid.Column="1" Focusable="False" AutomationProperties.LabeledBy="{Binding ElementName=OriginalColorLabel}">
+            <Label Content="New Color" Grid.Row="7" Grid.Column="0" x:Name="NewColorLabel" />
+            <Rectangle Grid.Row="7" Grid.Column="1" Focusable="False" AutomationProperties.LabeledBy="{Binding ElementName=NewColorLabel}" >
                 <Rectangle.Fill>
-                    <SolidColorBrush Color="{Binding OriginalColor, Mode=OneWay}" />
+                    <SolidColorBrush Color="{Binding CurrentEditorColor.Color, Mode=OneWay}" />
                 </Rectangle.Fill>
             </Rectangle>
 
-            <Label Content="New Color" Grid.Row="8" Grid.Column="0" x:Name="NewColorLabel" />
-            <Rectangle Grid.Row="8" Grid.Column="1" Focusable="False" AutomationProperties.LabeledBy="{Binding ElementName=NewColorLabel}" >
-                <Rectangle.Fill>
-                    <SolidColorBrush Color="{Binding Color, Mode=OneWay}" />
-                </Rectangle.Fill>
-            </Rectangle>
+            <StackPanel 
+                Grid.Row="8" 
+                Grid.Column="0" 
+                Grid.ColumnSpan="2" 
+                Orientation="Horizontal" 
+                HorizontalAlignment="Center" 
+                Background="{Binding BackgroundColor.Color, Converter={StaticResource ColorToBrushConverter}}">
+                
+                <TextBlock 
+                    Foreground="{Binding ForegroundColor.Color, Converter={StaticResource ColorToBrushConverter}}" 
+                    Margin="10"
+                    Text="Sample Text" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

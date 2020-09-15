@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="Models\MainWindowControlViewModel.cs" />
     <Compile Include="Models\NotifyPropertyBase.cs" />
+    <Compile Include="Models\ObservableColor.cs" />
     <Compile Include="Models\RelayCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CarnationPackage.cs" />

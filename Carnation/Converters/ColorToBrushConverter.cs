@@ -9,6 +9,11 @@ namespace Carnation
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                return Colors.Transparent;
+            }
+
             var color = (Color)value;
             return new SolidColorBrush(color);
         }

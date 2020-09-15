@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Carnation;
+using Carnation.Models;
 
 namespace Carnation
 {
@@ -15,49 +16,92 @@ namespace Carnation
     /// </summary>
     public partial class ColorPicker : UserControl
     {
-        public static readonly DependencyProperty ColorProperty = DependencyProperty.Register(
-            nameof(Color),
+        public static readonly DependencyProperty ForegroundColorProperty = DependencyProperty.Register(
+            nameof(ForegroundColor),
             typeof(Color),
             typeof(ColorPicker),
-            new PropertyMetadata(Colors.Red, OnColorChanged));
+            new PropertyMetadata(Colors.Red, OnForegroundColorChanged));
 
-        public static readonly DependencyProperty OriginalColorProperty = DependencyProperty.Register(
-            nameof(OriginalColor),
+        public static readonly DependencyProperty BackgroundColorProperty = DependencyProperty.Register(
+            nameof(BackgroundColor),
             typeof(Color),
             typeof(ColorPicker),
-            new PropertyMetadata(Colors.Red, OnOriginalColorChanged));
+            new PropertyMetadata(Colors.Red, OnBackgroundColorChanged));
+
+        public static readonly DependencyProperty EditBackgroundColorProperty = DependencyProperty.Register(
+            nameof(EditBackgroundColor),
+            typeof(bool),
+            typeof(ColorPicker),
+            new PropertyMetadata(false, OnEditBackgroundChanged));
+
+        private readonly ColorPickerViewModel _viewModel;
 
         public ColorPicker()
         {
-            var vm = new ColorPickerViewModel();
-            DataContext = vm;
+            DataContext = _viewModel = new ColorPickerViewModel();
             InitializeComponent();
 
-            vm.PropertyChanged += (s, a) =>
+            _viewModel.PropertyChanged += ViewModelPropertyChanged;
+            _viewModel.ForegroundColor.PropertyChanged += OnViewModelForegroundColorChanged;
+            _viewModel.BackgroundColor.PropertyChanged += OnViewModelBackgroundColorChanged;
+        }
+
+        private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
             {
-                switch (a.PropertyName)
-                {
-                    case nameof(ColorPickerViewModel.Color):
-                        Color = vm.Color;
-                        break;
+                case nameof(ColorPickerViewModel.ForegroundColor):
+                    if (_viewModel.ForegroundColor != null)
+                    {
+                        _viewModel.ForegroundColor.PropertyChanged += OnViewModelForegroundColorChanged;
+                    }
+                    break;
 
-                    case nameof(ColorPickerViewModel.OriginalColor):
-                        OriginalColor = vm.OriginalColor;
-                        break;
-                }
-            };
+                case nameof(ColorPickerViewModel.BackgroundColor):
+                    if (_viewModel.BackgroundColor != null)
+                    {
+                        _viewModel.BackgroundColor.PropertyChanged += OnViewModelBackgroundColorChanged;
+                    }
+                    break;
+
+                case nameof(ColorPickerViewModel.CurrentEditorColor):
+                    EditBackgroundColor = _viewModel.CurrentEditorColor == _viewModel.BackgroundColor;
+                    break;
+            }
         }
 
-        public Color Color
+        private void OnViewModelForegroundColorChanged(object sender, PropertyChangedEventArgs e)
         {
-            get => (Color)GetValue(ColorProperty);
-            set => SetValue(ColorProperty, value);
+            if (e.PropertyName == nameof(ObservableColor.Color))
+            {
+                ForegroundColor = ((ObservableColor)sender).Color;
+            }
         }
 
-        public Color OriginalColor
+        private void OnViewModelBackgroundColorChanged(object sender, PropertyChangedEventArgs e)
         {
-            get => (Color)GetValue(OriginalColorProperty);
-            set => SetValue(OriginalColorProperty, value);
+            if (e.PropertyName == nameof(ObservableColor.Color))
+            {
+                BackgroundColor = ((ObservableColor)sender).Color;
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get => (Color)GetValue(BackgroundColorProperty);
+            set => SetValue(BackgroundColorProperty, value);
+        }
+
+        public Color ForegroundColor
+        {
+            get => (Color)GetValue(ForegroundColorProperty);
+            set => SetValue(ForegroundColorProperty, value);
+        }
+
+        public bool EditBackgroundColor
+        {
+            get => (bool)GetValue(EditBackgroundColorProperty);
+            set => SetValue(EditBackgroundColorProperty, value);
         }
 
         private void SelectAllText(object sender, RoutedEventArgs e)
@@ -68,18 +112,33 @@ namespace Carnation
             }
         }
 
-        private static void OnColorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static void OnForegroundColorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)o;
             var vm = (ColorPickerViewModel)colorPicker.DataContext;
-            vm.Color = (Color)e.NewValue;
+            vm.SetForegroundColor((Color)e.NewValue);
         }
 
-        private static void OnOriginalColorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        private static void OnBackgroundColorChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             var colorPicker = (ColorPicker)o;
             var vm = (ColorPickerViewModel)colorPicker.DataContext;
-            vm.OriginalColor = (Color)e.NewValue;
+            vm.SetBackgroundColor((Color)e.NewValue);
+        }
+
+        private static void OnEditBackgroundChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            var colorPicker = (ColorPicker)o;
+            var vm = (ColorPickerViewModel)colorPicker.DataContext;
+
+            if ((bool)e.NewValue)
+            {
+                vm.CurrentEditorColor = vm.BackgroundColor;
+            }
+            else
+            {
+                vm.CurrentEditorColor = vm.ForegroundColor;
+            }
         }
     }
 }

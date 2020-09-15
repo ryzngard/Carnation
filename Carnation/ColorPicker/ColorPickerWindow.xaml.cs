@@ -10,14 +10,16 @@ namespace Carnation
     /// </summary>
     public partial class ColorPickerWindow : Window
     {
-        public Color Color { get; private set; }
+        public Color ForegroundColor => ColorPicker.ForegroundColor;
+        public Color BackgroundColor => ColorPicker.BackgroundColor;
 
-        public ColorPickerWindow(Color color)
+        public ColorPickerWindow(Color foregroundColor, Color backgroundColor, bool editBackground = false)
         {
             InitializeComponent();
 
-            ColorPicker.OriginalColor = color;
-            ColorPicker.Color = color;
+            ColorPicker.ForegroundColor = foregroundColor;
+            ColorPicker.BackgroundColor = backgroundColor;
+            ColorPicker.EditBackgroundColor = editBackground;
 
             // Focus the first tab item when the window loads
             Loaded += (s, e) => MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
@@ -33,13 +35,6 @@ namespace Carnation
         {
             DialogResult = false;
             Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            Color = ColorPicker.Color;
         }
     }
 }

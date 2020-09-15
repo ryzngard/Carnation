@@ -1,198 +1,46 @@
 ﻿using System.Windows.Media;
+using Carnation.Models;
 
 namespace Carnation
 {
     internal class ColorPickerViewModel : NotifyPropertyBase
     {
-        private UpdateBehavior _updateBehavior = UpdateBehavior.None;
         public ColorPickerViewModel()
         {
+            ForegroundColor = new ObservableColor(Colors.Transparent);
+            BackgroundColor = new ObservableColor(Colors.Transparent);
+            CurrentEditorColor = ForegroundColor;
         }
 
-        private Color _originalColor;
-        public Color OriginalColor
+        private ObservableColor _currentEditorColor;
+        public ObservableColor CurrentEditorColor
         {
-            get => _originalColor;
-            set => SetProperty(ref _originalColor, value);
+            get => _currentEditorColor;
+            set => SetProperty(ref _currentEditorColor, value);
         }
 
-        private Color _color;
-        public Color Color
+        private ObservableColor _backgroundColor;
+        public ObservableColor BackgroundColor
         {
-            get => _color;
-            set
-            {
-                if (!SetProperty(ref _color, value))
-                {
-                    return;
-                }
-
-                if (_updateBehavior != UpdateBehavior.FromComponent)
-                {
-                    UpdateColorComponents();
-                }
-            }
+            get => _backgroundColor;
+            set => SetProperty(ref _backgroundColor, value);
         }
 
-        private double _hue;
-        public double Hue
+        private ObservableColor _foregroundColor;
+        public ObservableColor ForegroundColor
         {
-            get => _hue;
-            set
-            {
-                if (!SetProperty(ref _hue, value))
-                {
-                    return;
-                }
-
-                if (_updateBehavior == UpdateBehavior.None)
-                {
-                    UpdateColorFromHSB();
-                }
-            }
+            get => _foregroundColor;
+            set => SetProperty(ref _foregroundColor, value);
         }
 
-        private double _saturation;
-        public double Saturation
+        public void SetForegroundColor(Color color)
         {
-            get => _saturation;
-            set
-            {
-                if (!SetProperty(ref _saturation, value))
-                {
-                    return;
-                }
-
-                if (_updateBehavior == UpdateBehavior.None)
-                {
-                    UpdateColorFromHSB();
-                }
-            }
+            ForegroundColor.Color = color;
         }
 
-        private double _brightness;
-        public double Brightness
-        {
-            get => _brightness;
-            set
-            {
-                if (!SetProperty(ref _brightness, value))
-                {
-                    return;
-                }
-
-                if (_updateBehavior == UpdateBehavior.None)
-                {
-                    UpdateColorFromHSB();
-                }
-            }
-        }
-
-        private byte _red;
-        public byte Red
-        {
-            get => _red;
-            set
-            {
-                if (!SetProperty(ref _red, value))
-                {
-                    return;
-                }
-
-                if (_updateBehavior == UpdateBehavior.None)
-                {
-                    UpdateColorFromRGB();
-                }
-            }
-        }
-
-        private byte _green;
-        public byte Green
-        {
-            get => _green;
-            set
-            {
-                if (!SetProperty(ref _green, value))
-                {
-                    return;
-                }
-
-                if (_updateBehavior == UpdateBehavior.None)
-                {
-                    UpdateColorFromRGB();
-                }
-            }
-        }
-
-        private byte _blue;
-        public byte Blue
-        {
-            get => _blue;
-            set
-            {
-                if (!SetProperty(ref _blue, value))
-                {
-                    return;
-                }
-
-                if (_updateBehavior == UpdateBehavior.None)
-                {
-                    UpdateColorFromRGB();
-                }
-            }
-        }
-
-        private void UpdateColorFromRGB()
-        {
-            _updateBehavior = UpdateBehavior.FromComponent;
-
-            Color = Color.FromRgb(Red, Green, Blue);
-            Hue = ColorHelpers.GetHue(Color);
-            Saturation = ColorHelpers.GetSaturation(Color);
-            Brightness = ColorHelpers.GetSaturation(Color);
-
-            _updateBehavior = UpdateBehavior.None;
-        }
-
-        private void UpdateColorFromHSB()
-        {
-            _updateBehavior = UpdateBehavior.FromComponent;
-
-            Color = ColorHelpers.HSVToColor(Hue, Saturation, Brightness);
-            Red = Color.R;
-            Green = Color.G;
-            Blue = Color.B;
-
-            _updateBehavior = UpdateBehavior.None;
-        }
-
-        private void UpdateColorComponents()
-        {
-            _updateBehavior = UpdateBehavior.FromColor;
-
-            Red = Color.R;
-            Green = Color.G;
-            Blue = Color.B;
-            Hue = ColorHelpers.GetHue(Color);
-            Saturation = ColorHelpers.GetSaturation(Color);
-            Brightness = ColorHelpers.GetSaturation(Color);
-
-            _updateBehavior = UpdateBehavior.None;
-        }
-
-        private enum UpdateBehavior
-        {
-            None,
-
-            /// <summary>
-            /// Update is triggered from the Color property being updated
-            /// </summary>
-            FromColor,
-
-            /// <summary>
-            /// Update is triggered from a component of Color, such as Hue
-            /// </summary>
-            FromComponent
+        public void SetBackgroundColor(Color color)
+        {                
+            BackgroundColor.Color = color;
         }
     }
 }
