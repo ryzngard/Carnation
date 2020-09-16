@@ -27,14 +27,20 @@
             x:Name="ColorPicker" />
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <GroupBox Header="Example Colors" Margin="10">
+            <GroupBox Margin="10" BorderThickness="0">
+                <GroupBox.Header>
+                    <Label Content="Example Colors" Style="{StaticResource {x:Static vsfx:VsResourceKeys.ThemedDialogLabelStyleKey}}" />
+                </GroupBox.Header>
                 <local:ColorPalette
                     x:Name="ExampleColors" 
                     Rows="3"
                     ColorPadding="2"
                     ColorSelected="ColorPaletteSelected" />
             </GroupBox>
-            <GroupBox Header="Saved Colors" Margin="10">
+            <GroupBox Margin="10" BorderThickness="0">
+                <GroupBox.Header>
+                    <Label Content="Saved Colors" Style="{StaticResource {x:Static vsfx:VsResourceKeys.ThemedDialogLabelStyleKey}}" />
+                </GroupBox.Header>
                 <local:ColorPalette
                     x:Name="SavedColors"
                     Rows="3"
