@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Reflection;
 using System.Windows.Media;
 
 namespace Carnation
@@ -71,5 +74,55 @@ namespace Carnation
 
         private static double Clamp(double value, double min, double max)
             => Math.Max(min, Math.Min(value, max));
+
+        internal static bool TryGetSystemDrawingName(Color color, out string name)
+        {
+            foreach (var knownColorKey in Enum.GetValues(typeof(System.Drawing.KnownColor)).Cast<System.Drawing.KnownColor>())
+            {
+                var knownColor = System.Drawing.Color.FromKnownColor(knownColorKey);
+                if (knownColor.R == color.R &&
+                    knownColor.G == color.G &&
+                    knownColor.B == color.B)
+                    // Alpha doesn't seem helpful here, since it doesn't really dictate what the color is but 
+                    // rather the transparency of the color
+                {
+                    name = Enum.GetName(typeof(System.Drawing.KnownColor), knownColorKey);
+                    return true;
+                }
+            }
+
+            name = null;
+            return false;
+        }
+
+        internal static bool TryGetWindowsMediaName(Color color, out string name)
+        {
+            var colorNames = GetColorNames();
+            var colorNamePair = colorNames.FirstOrDefault(pair => color == pair.Item1);
+
+            if (string.IsNullOrEmpty(colorNamePair.Item2))
+            {
+                name = null;
+                return false;
+            }
+
+            name = colorNamePair.Item2;
+            return true;
+        }
+
+        private static ImmutableArray<(Color, string)> _colorNames;
+        private static ImmutableArray<(Color, string)> GetColorNames()
+        {
+            if (_colorNames.IsDefault)
+            {
+                var properties = typeof(Colors).GetProperties(BindingFlags.Public | BindingFlags.Static);
+                _colorNames = properties
+                    .Where(p => p.PropertyType == typeof(Color))
+                    .Select(p => ((Color)p.GetValue(null), p.Name))
+                    .ToImmutableArray();
+            }
+
+            return _colorNames;
+        }
     }
 }

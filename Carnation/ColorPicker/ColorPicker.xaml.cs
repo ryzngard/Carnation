@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -39,6 +40,11 @@ namespace Carnation
             _viewModel.PropertyChanged += ViewModelPropertyChanged;
             _viewModel.ForegroundColor.PropertyChanged += OnViewModelForegroundColorChanged;
             _viewModel.BackgroundColor.PropertyChanged += OnViewModelBackgroundColorChanged;
+        }
+
+        public void SetColor(Color color)
+        {
+            _viewModel.CurrentEditorColor.Color = color;
         }
 
         private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)

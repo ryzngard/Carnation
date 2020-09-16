@@ -14,18 +14,37 @@
         vs:ThemedDialogStyleLoader.UseDefaultThemedDialogStyles="True"
         vs2:ImageThemingUtilities.ThemeScrollBars="True"
         Background="{DynamicResource {x:Static vs:ThemedDialogColors.WindowPanelBrushKey}}"
-        Title="Color Picker" Height="450" Width="800">
+        Title="Color Picker" Height="550" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <local:ColorPicker 
             Grid.Row="0" 
             x:Name="ColorPicker" />
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <GroupBox Header="Example Colors" Margin="10">
+                <local:ColorPalette
+                    x:Name="ExampleColors" 
+                    Rows="3"
+                    ColorPadding="2"
+                    ColorSelected="ColorPaletteSelected" />
+            </GroupBox>
+            <GroupBox Header="Saved Colors" Margin="10">
+                <local:ColorPalette
+                    x:Name="SavedColors"
+                    Rows="3"
+                    ColorPadding="2"
+                    ColorSelected="ColorPaletteSelected" />
+            </GroupBox>
+        </StackPanel>
         
-        <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0, 0, 10, 5">
+
+        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0, 0, 10, 5">
             <StackPanel.Resources>
                 <Style TargetType="Button" BasedOn="{StaticResource {x:Static vsfx:VsResourceKeys.ThemedDialogButtonStyleKey}}">
                     <Setter Property="Margin" Value="5" />

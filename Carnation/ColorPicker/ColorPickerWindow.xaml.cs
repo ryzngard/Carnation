@@ -37,5 +37,10 @@ namespace Carnation
             DialogResult = false;
             Close();
         }
+
+        private void ColorPaletteSelected(object _, Color color)
+        {
+            ColorPicker.SetColor(color);
+        }
     }
 }
