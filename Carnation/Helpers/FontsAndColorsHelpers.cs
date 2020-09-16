@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Media;
+using Carnation.Helpers;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
@@ -48,7 +49,7 @@ namespace Carnation
                     : DefaultFontFamily;
 
                 var fontSize = fontInfo[0].bPointSizeValid == 1
-                    ? Math.Abs(logFont[0].lfHeight)
+                    ? Math.Abs(logFont[0].lfHeight) * GetDipsPerPixel()
                     : DefaultFontSize;
 
                 return (fontFamily, fontSize);
@@ -57,6 +58,21 @@ namespace Carnation
             {
                 fontsAndColorStorage.CloseCategory();
             }
+        }
+
+        private static double GetDipsPerPixel()
+        {
+            var dc = UnsafeNativeMethods.GetDC(IntPtr.Zero);
+            if (dc != IntPtr.Zero)
+            {
+                // Getting the DPI from the desktop is bad, but some callers just have no context for what monitor they are on.
+                double fallbackDpi = UnsafeNativeMethods.GetDeviceCaps(dc, UnsafeNativeMethods.LOGPIXELSX);
+                UnsafeNativeMethods.ReleaseDC(IntPtr.Zero, dc);
+
+                return fallbackDpi / 96.0;
+            }
+
+            return 1;
         }
 
         private static void EnsureInitialized()

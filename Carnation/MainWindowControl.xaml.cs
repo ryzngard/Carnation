@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Controls;
-using System.Windows.Media;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Classification;
@@ -36,6 +35,7 @@ namespace Carnation
 
             void ReloadClassifications()
             {
+                ClassificationsGrid.ApplyTemplate();
                 _viewModel.OnThemeChanged();
             }
         }
