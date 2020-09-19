@@ -54,7 +54,7 @@ namespace Carnation
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        private Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider => package;
+        public Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider => package;
 
         /// <summary>
         /// Initializes the singleton instance of the command.

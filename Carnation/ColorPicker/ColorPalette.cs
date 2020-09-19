@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
@@ -7,13 +7,23 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using Microsoft.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.Shell;
 using SWM = System.Windows.Media;
 
 namespace Carnation
 {
-    internal class ColorPalette : UserControl
+    public class ColorPalleteSelectedArgs : EventArgs
+    {
+        public Color Color { get; }
+        public int Index { get; }
+
+        public ColorPalleteSelectedArgs(Color color, int index)
+        {
+            Color = color;
+            Index = index;
+        }
+    }
+
+    public class ColorPalette : UserControl
     {
 
         private static readonly Color[] s_colorSwatch = new[]
@@ -34,7 +44,8 @@ namespace Carnation
             SWM.Colors.Purple,
             Color.FromRgb(178, 0, 255), // purple/magenta
             SWM.Colors.Magenta,
-            Color.FromRgb(255, 0, 110) // magenta/red
+            Color.FromRgb(255, 0, 110), // magenta/red,
+            SWM.Colors.MediumVioletRed
         };
 
         public static readonly uint Variable = 0;
@@ -53,9 +64,9 @@ namespace Carnation
 
         public static readonly DependencyProperty ColorsProperty = DependencyProperty.Register(
             nameof(Colors),
-            typeof(Color[]),
+            typeof(ImmutableArray<Color>),
             typeof(ColorPalette),
-            new PropertyMetadata(s_colorSwatch, RefreshGrid));
+            new PropertyMetadata(s_colorSwatch.ToImmutableArray(), RefreshGrid));
 
         public static readonly DependencyProperty SizeProperty = DependencyProperty.Register(
             nameof(Size),
@@ -69,7 +80,7 @@ namespace Carnation
             typeof(ColorPalette),
             new PropertyMetadata(new Thickness(0), RefreshGrid));
 
-        public event EventHandler<Color> ColorSelected;
+        public event EventHandler<ColorPalleteSelectedArgs> ColorSelected;
 
         private readonly Grid _grid = new Grid();
 
@@ -85,48 +96,54 @@ namespace Carnation
             _grid.RowDefinitions.Clear();
             _grid.ColumnDefinitions.Clear();
 
-            var actualRows = Rows;
-            var actualColumns = Columns;
+            var (rows, columns) = GetActualRowsAndColumns();
 
-            if (actualRows == Variable && actualColumns == Variable)
-            {
-                // Try to make a square from the colors
-                actualRows = (uint)Math.Ceiling(Math.Sqrt(Colors.Length));
-                actualColumns = (uint)Math.Ceiling(Colors.Length / (double)actualRows);
-            }
-            else if (actualRows == Variable)
-            {
-                actualRows = (uint)Math.Ceiling(Colors.Length / (double)actualColumns);
-            }
-            else if (actualColumns == Variable)
-            {
-                actualColumns = (uint)Math.Ceiling(Colors.Length / (double)actualRows);
-            }
-
-            for (var row = 0; row < actualRows; row++)
+            for (var row = 0; row < rows; row++)
             {
                 var rowDefinition = new RowDefinition();
                 rowDefinition.Height = GridLength.Auto;
                 _grid.RowDefinitions.Add(rowDefinition);
 
-                for (var column = 0; column < actualColumns; column++)
+                for (var column = 0; column < columns; column++)
                 {
                     var columnDefinition = new ColumnDefinition();
                     columnDefinition.Width = GridLength.Auto;
                     _grid.ColumnDefinitions.Add(columnDefinition);
 
-                    var index = (row * actualColumns) + column;
+                    var index = (row * (int)columns) + column;
                     var color = index >= Colors.Length
                         ? SWM.Colors.White
                         : Colors[index];
 
-                    var item = GenerateItem(row, column, color);
+                    var item = GenerateItem(row, column, color, index);
                     _grid.Children.Add(item);
                 }
             }
         }
+        private (int rows, int columns) GetActualRowsAndColumns()
+        {
+            var actualRows = (int)Rows;
+            var actualColumns = (int)Columns;
 
-        private UIElement GenerateItem(int row, int column, Color color)
+            if (actualRows == Variable && actualColumns == Variable)
+            {
+                // Try to make a square from the colors
+                actualRows = (int)Math.Ceiling(Math.Sqrt(Colors.Length));
+                actualColumns = (int)Math.Ceiling(Colors.Length / (double)actualRows);
+            }
+            else if (actualRows == Variable)
+            {
+                actualRows = (int)Math.Ceiling(Colors.Length / (double)actualColumns);
+            }
+            else if (actualColumns == Variable)
+            {
+                actualColumns = (int)Math.Ceiling(Colors.Length / (double)actualRows);
+            }
+
+            return (actualRows, actualColumns);
+        }
+
+        private UIElement GenerateItem(int row, int column, Color color, int index)
         {
             var rectangle = new Rectangle();
             rectangle.Fill = new SolidColorBrush(color);
@@ -171,12 +188,12 @@ namespace Carnation
             
             AutomationProperties.SetHelpText(focusBorder, GetColorHelpText(color));
 
-            focusBorder.MouseDown += (s, a) => ColorSelected?.Invoke(this, color);
+            focusBorder.MouseDown += (s, a) => ColorSelected?.Invoke(this, new ColorPalleteSelectedArgs(color, index));
             focusBorder.KeyDown += (s, a) =>
             {
                 if (a.Key == System.Windows.Input.Key.Enter)
                 {
-                    ColorSelected?.Invoke(this, color);
+                    ColorSelected?.Invoke(this, new ColorPalleteSelectedArgs(color, index));
                 }
             };
 
@@ -225,10 +242,26 @@ namespace Carnation
             set => SetValue(SizeProperty, value);
         }
 
-        public Color[] Colors
+        public ImmutableArray<Color> Colors
         {
-            get => (Color[])GetValue(ColorsProperty);
-            set => SetValue(ColorsProperty, value);
+            get => (ImmutableArray<Color>)GetValue(ColorsProperty);
+            set
+            {
+                var (rows, columns) = GetActualRowsAndColumns();
+                var maxLength = rows * columns;
+                
+                if (value.Length <= maxLength)
+                {
+                    var newArray = new Color[maxLength];
+                    value.CopyTo(newArray);
+
+                    SetValue(ColorsProperty, newArray.ToImmutableArray());
+                }
+                else
+                {
+                    SetValue(ColorsProperty, value.Take(maxLength).ToImmutableArray());
+                }
+            }
         }
 
         public Thickness ColorPadding

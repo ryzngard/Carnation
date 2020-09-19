@@ -63,6 +63,14 @@ namespace Carnation
                               (byte)(argb & 0xff));
         }
 
+        internal static int ToInt(Color color)
+        {
+            return (color.A << 0x18) +
+                (color.R << 0x10) +
+                (color.G << 0x08) +
+                color.B;
+        }
+
         internal static double GetHue(Color color)
             => System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B).GetHue();
 

@@ -47,6 +47,8 @@ namespace Carnation
             _viewModel.CurrentEditorColor.Color = color;
         }
 
+        public Color GetColor() => _viewModel.CurrentEditorColor.Color;
+
         private void ViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

@@ -16,6 +16,13 @@
         Background="{DynamicResource {x:Static vs:ThemedDialogColors.WindowPanelBrushKey}}"
         Title="Color Picker" Height="550" Width="800">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="Button" BasedOn="{StaticResource {x:Static vsfx:VsResourceKeys.ThemedDialogButtonStyleKey}}">
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="Padding" Value="5" />
+                <Setter Property="MinWidth" Value="40" />
+            </Style>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -47,17 +54,9 @@
                     ColorPadding="2"
                     ColorSelected="ColorPaletteSelected" />
             </GroupBox>
+            <Button Content="Save Color" Click="SaveColor_Click" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </StackPanel>
-        
-
         <StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0, 0, 10, 5">
-            <StackPanel.Resources>
-                <Style TargetType="Button" BasedOn="{StaticResource {x:Static vsfx:VsResourceKeys.ThemedDialogButtonStyleKey}}">
-                    <Setter Property="Margin" Value="5" />
-                    <Setter Property="Padding" Value="5" />
-                    <Setter Property="MinWidth" Value="40" />
-                </Style>
-            </StackPanel.Resources>
             <Button x:Name="OkButton" Content="Ok" Click="OkButton_Click" />
             <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click" />
         </StackPanel>
