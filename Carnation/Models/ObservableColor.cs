@@ -178,7 +178,7 @@ namespace Carnation.Models
             Color = Color.FromRgb(Red, Green, Blue);
             Hue = ColorHelpers.GetHue(Color);
             Saturation = ColorHelpers.GetSaturation(Color);
-            Brightness = ColorHelpers.GetSaturation(Color);
+            Brightness = ColorHelpers.GetBrightness(Color);
             Hex = Color.ToString();
 
             _updateBehavior = UpdateBehavior.None;
