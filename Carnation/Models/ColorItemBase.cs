@@ -11,11 +11,25 @@ namespace Carnation
             set => SetProperty(ref _foreground, value);
         }
 
+        private bool _isForegroundEditable = true;
+        public bool IsForegroundEditable
+        {
+            get => _isForegroundEditable;
+            set => SetProperty(ref _isForegroundEditable, value);
+        }
+
         private Color _background;
         public Color Background
         {
             get => _background;
             set => SetProperty(ref _background, value);
+        }
+
+        private bool _isBackgroundEditable = true;
+        public bool IsBackgroundEditable
+        {
+            get => _isBackgroundEditable;
+            set => SetProperty(ref _isBackgroundEditable, value);
         }
 
         private bool _isBold;
