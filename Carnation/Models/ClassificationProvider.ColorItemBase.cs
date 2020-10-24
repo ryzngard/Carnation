@@ -25,7 +25,7 @@ namespace Carnation
                     : Colors.Transparent;
                 set
                 {
-                    Contract.Assert(IsForegroundEditable);
+                    Contract.Assert(IsUpdating || IsForegroundEditable);
                     ForegroundColorRef = FontsAndColorsHelper.GetColorRef(value, PlainTextForeground);
                 }
             }
@@ -55,7 +55,7 @@ namespace Carnation
                     : Colors.Transparent;
                 set
                 {
-                    Contract.Assert(IsBackgroundEditable);
+                    Contract.Assert(IsUpdating || IsBackgroundEditable);
                     BackgroundColorRef = FontsAndColorsHelper.GetColorRef(value, PlainTextBackground);
                 }
             }
@@ -73,7 +73,7 @@ namespace Carnation
                 get => _isBold;
                 set
                 {
-                    Contract.Assert(IsBoldEditable);
+                    Contract.Assert(IsUpdating || IsBoldEditable);
                     SetProperty(ref _isBold, value);
                 }
             }
@@ -130,6 +130,12 @@ namespace Carnation
 
             private void ComputeContrastRatio()
             {
+                if (!IsForegroundEditable || !IsBackgroundEditable)
+                {
+                    ContrastRatio = "N/A";
+                    ContrastRating = "N/A";
+                }
+
                 var contrast = ColorHelpers.GetContrast(Foreground, Background);
                 ContrastRatio = $"{contrast:N2}";
                 ContrastRating = GetContrastSymbol(contrast);
