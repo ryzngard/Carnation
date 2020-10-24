@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -9,6 +8,7 @@ using System.Windows.Media;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using static Carnation.ClassificationProvider;
 
 namespace Carnation
 {
@@ -26,29 +26,23 @@ namespace Carnation
             EditForegroundCommand = new RelayCommand<ClassificationGridItem>(OnEditForeground);
             EditBackgroundCommand = new RelayCommand<ClassificationGridItem>(OnEditBackground);
             UseItemDefaultsCommand = new RelayCommand<ClassificationGridItem>(OnUseItemDefaults);
+            ToggleIsBoldCommand = new RelayCommand<ClassificationGridItem>(OnToggleIsBold);
+
+            foreach (var classificationItem in ClassificationProvider.GridItems)
+            {
+                ClassificationGridItems.Add(classificationItem);
+            }
+
+            ClassificationGridView.SortDescriptions.Clear();
+            ClassificationGridView.SortDescriptions.Add(new SortDescription(nameof(ClassificationGridItem.Classification), ListSortDirection.Ascending));
+
+            (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
         }
 
         #region Properties
-        private static readonly ItemPropertiesGridItem[] s_defaultPropertiesGridItems = new[]
-        {
-            new ItemPropertiesGridItem(Colors.White, Colors.Black, false),
-            new ItemPropertiesGridItem(Colors.DarkRed, Colors.White, true)
-        };
 
-        private static readonly Color[] s_availableColors = new[]
-        {
-            Colors.White,
-            Colors.Red,
-            Colors.Green,
-            Colors.Blue,
-            Colors.Orange,
-            Colors.Pink,
-            Colors.Black
-        };
-
+        public ClassificationProvider ClassificationProvider { get; } = new ClassificationProvider();
         public ObservableCollection<ClassificationGridItem> ClassificationGridItems { get; } = new ObservableCollection<ClassificationGridItem>();
-        public ObservableCollection<ItemPropertiesGridItem> ItemPropertiesGridItems { get; } = new ObservableCollection<ItemPropertiesGridItem>(s_defaultPropertiesGridItems);
-        public ObservableCollection<Color> AvailableColors { get; } = new ObservableCollection<Color>(s_availableColors);
 
         private ClassificationGridItem _selectedClassification;
         public ClassificationGridItem SelectedClassification
@@ -76,20 +70,6 @@ namespace Carnation
         {
             get => _searchTextEnabled;
             set => SetProperty(ref _searchTextEnabled, value);
-        }
-
-        private Color _plainTextForeground;
-        public Color PlainTextForeground
-        {
-            get => _plainTextForeground;
-            set => SetProperty(ref _plainTextForeground, value);
-        }
-
-        private Color _plainTextBackground;
-        public Color PlainTextBackground
-        {
-            get => _plainTextBackground;
-            set => SetProperty(ref _plainTextBackground, value);
         }
 
         private FontFamily _fontFamily;
@@ -137,13 +117,16 @@ namespace Carnation
         public ICommand EditForegroundCommand { get; }
         public ICommand EditBackgroundCommand { get; }
         public ICommand UseItemDefaultsCommand { get; }
+        public ICommand ToggleIsBoldCommand { get; }
         #endregion
 
         #region Public Methods
-        public void OnThemeChanged()
+        public void OnThemeChanged(ILookup<string, string> definitionNames)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            ReloadClassifications();
+
+            (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
+            ClassificationProvider.Refresh(definitionNames);
         }
 
         public void OnSelectedSpanChanged(IWpfTextView view, Span? span)
@@ -166,28 +149,6 @@ namespace Carnation
         #endregion
 
         #region Private Methods
-        private void ReloadClassifications()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            (PlainTextForeground, PlainTextBackground) = FontsAndColorsHelper.GetPlainTextColors();
-            (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
-
-            var classificationItems = ClassificationHelpers.GetClassificationNames()
-                .Select(names => FontsAndColorsHelper.TryGetItemForClassification(names, PlainTextForeground, PlainTextBackground))
-                .OfType<ClassificationGridItem>()
-                .ToImmutableArray();
-
-            ClassificationGridItems.Clear();
-
-            foreach (var classificationItem in classificationItems)
-            {
-                ClassificationGridItems.Add(classificationItem);
-            }
-
-            ClassificationGridView.SortDescriptions.Clear();
-            ClassificationGridView.SortDescriptions.Add(new SortDescription("Classification", ListSortDirection.Ascending));
-        }
 
         private bool FilterClassification(ClassificationGridItem item)
         {
@@ -250,7 +211,12 @@ namespace Carnation
 
         private void OnUseItemDefaults(ClassificationGridItem item)
         {
-            FontsAndColorsHelper.ResetClassificationItem(item, PlainTextForeground, PlainTextBackground);
+            FontsAndColorsHelper.ResetClassificationItem(item);
+        }
+
+        private void OnToggleIsBold(ClassificationGridItem item)
+        {
+            item.IsBold = !item.IsBold;
         }
 
         private void OnEditForeground(ClassificationGridItem item)
@@ -262,7 +228,6 @@ namespace Carnation
         {
             ShowColorPicker(item, true);
         }
-
 
         private void ShowColorPicker(ClassificationGridItem item, bool editBackground = false)
         {

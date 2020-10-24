@@ -13,7 +13,7 @@
              Name="MyToolWindow"
              Resources="{StaticResource {x:Static vsshell:VsResourceKeys.ThemedDialogDefaultStylesKey}}">
 
-    <Grid>
+    <Grid Background="{DynamicResource {x:Static vsshell:VsBrushes.CommandShelfBackgroundGradientKey}}">
         <Grid.Resources>
             <ResourceDictionary>
                 <ResourceDictionary.MergedDictionaries>
@@ -22,6 +22,7 @@
                 <local:ValueIsSetVisibilityConverter x:Key="ValueIsSetVisibilityConverter" />
                 <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
                 <local:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
+                <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
                 <sys:Double x:Key="ColorSelectorWidth">30</sys:Double>
 
                 <DataTemplate DataType="{x:Type Color}" x:Key="ColorSelectorItemTemplate">
@@ -37,18 +38,16 @@
         </Grid.RowDefinitions>
 
         <!-- Import/Export row-->
-        <DockPanel Grid.Row="0" Visibility="Visible">
+        <DockPanel Grid.Row="0" Visibility="Collapsed">
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left">
-                <Button Content="Import" />
-                <Button Content="Export" />
+                <Button Content="Undo" Margin="4 4 0 0" />
+                <Button Content="Redo" Margin="4 4 0 0" />
             </StackPanel>
 
-            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Reset Theme To Defaults" />
-            </StackPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Discard All Changes" />
-                <Button Content="Save All Changes" />
+                <Button Content="Import" Margin="4 4 0 0" />
+                <Button Content="Export" Margin="4 4 0 0" />
+                <Button Content="Reset Theme To Defaults" Margin="4 4 4 0" />
             </StackPanel>
         </DockPanel>
 
@@ -59,9 +58,13 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <ComboBox Grid.Column="0" IsEditable="True" Text="{Binding SearchText}" ItemsSource="{Binding ClassificationGridView}" />
-            <ToggleButton x:Name="TrackCursor" Grid.Column="1" Content="Follow Cursor" IsChecked="{Binding FollowCursorSelected}">
-            </ToggleButton>
+            <ComboBox x:Name="SearchBox" Grid.Column="0" Margin="4 4 0 4" IsEditable="True" Text="{Binding SearchText}" ItemsSource="{Binding ClassificationGridView}" />
+            <TextBlock Grid.Column="0" Margin="8"
+               Foreground="{DynamicResource {x:Static vsshell:VsBrushes.GrayTextKey}}"
+               Visibility="{Binding Text, ElementName=SearchBox, Converter={StaticResource NullToVisibilityConverter}}"
+               IsHitTestVisible="False"
+               Text="Search Classifications" />
+            <ToggleButton x:Name="TrackCursor" Margin="4" Grid.Column="1" Content="Follow Cursor" IsChecked="{Binding FollowCursorSelected}" />
         </Grid>
 
         <!-- Classifications Grid -->
@@ -74,9 +77,9 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn 
-                    Header="Classification"
+                    Header="Display Items"
                     IsReadOnly="True"
-                    Binding="{Binding Classification}">
+                    Binding="{Binding DefinitionName}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="Padding" Value="4 0 0 0" />
@@ -85,8 +88,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.Header>Foreground</DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn Header="Foreground">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content=""
@@ -97,8 +99,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.Header>Background</DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn Header="Background">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content=""
@@ -109,31 +110,32 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridCheckBoxColumn 
-                    Header="Bold"
-                    Binding="{Binding IsBold}">
-                    <DataGridCheckBoxColumn.ElementStyle>
-                        <Style TargetType="CheckBox">
-                            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
-                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                        </Style>
-                    </DataGridCheckBoxColumn.ElementStyle>
-                </DataGridCheckBoxColumn>
-                
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.Header>Sample</DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn Header="Bold">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsBold, Mode=OneWay}"
+                                      IsEnabled="{Binding IsBoldEditable, Mode=OneWay}"
+                                      Command="{Binding ElementName=MyToolWindow, Path=DataContext.ToggleIsBoldCommand}"
+                                      CommandParameter="{Binding Path=.}"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTemplateColumn Header="Sample">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}">
                                 <TextBlock Text="{Binding Sample}" 
                                            VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
                                            Padding="8, 0"
                                            Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}"
-                                           Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
                                            FontFamily="{Binding ElementName=MyToolWindow, Path=DataContext.FontFamily, Mode=OneWay}" 
                                            FontSize="{Binding ElementName=MyToolWindow, Path=DataContext.FontSize, Mode=OneWay}"
                                            FontWeight="{Binding IsBold, Converter={StaticResource BoolToFontWeightConverter}, Mode=OneWay}" />
-                            </StackPanel>
+                            </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

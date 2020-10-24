@@ -1,27 +1,114 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Windows.Media;
 using Carnation.Helpers;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.TextManager.Interop;
+using static Carnation.ClassificationProvider;
 
 namespace Carnation
 {
     internal static class FontsAndColorsHelper
     {
-        private static readonly Guid TextEditorMEFItemsColorCategory = new Guid("75a05685-00a8-4ded-bae5-e7a50bfa929a");
-        private static readonly FontFamily DefaultFontFamily = new FontFamily("Consolas");
-        private static readonly double DefaultFontSize = 13.0;
-        private static readonly (FontFamily, double) DefaultFontInfo = (DefaultFontFamily, DefaultFontSize);
-        private static readonly (Color, Color) DefaultTextColors = (Colors.Black, Colors.White);
+        private static readonly Guid TextEditorCategory = new Guid("A27B4E24-A735-4d1d-B8E7-9716E1E3D8E0");
+        private static readonly Guid TextEditorMEFItemsCategory = new Guid("75A05685-00A8-4DED-BAE5-E7A50BFA929A");
+        private static readonly Guid TextEditorLanguageServiceCategory = new Guid("E0187991-B458-4F7E-8CA9-42C9A573B56C");
+        private static readonly Guid TextEditorManagerCategory = new Guid("58E96763-1D3B-4E05-B6BA-FF7115FD0B7B");
+        private static readonly Guid TextEditorMarkerCategory = new Guid("FF349800-EA43-46C1-8C98-878E78F46501");
+
+        private static readonly (FontFamily FontFamily, double FontSize) DefaultFontInfo = (new FontFamily("Consolas"), 13.0);
+        private static readonly (Color Foreground, Color Background) DefaultTextColors = (Colors.Black, Colors.White);
 
         private static IVsFontAndColorStorage s_fontsAndColorStorage;
+        private static IVsFontAndColorDefaultsProvider s_fontsAndColorDefaultsProvider;
         private static IVsUIShell2 s_vsUIShell2;
 
-        public static (FontFamily, double) GetEditorFontInfo()
+        private const uint InvalidColorRef = 0xff000000;
+
+        private static readonly Guid[] s_categories = new[]
+        {
+            TextEditorManagerCategory,
+            TextEditorMEFItemsCategory,
+            // TextEditorMarkerCategory,
+            // TextEditorCategory,
+            // TextEditorLanguageServiceCategory
+        };
+
+        public static ImmutableDictionary<Guid, ImmutableArray<AllColorableItemInfo>> GetTextEditorInfos()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            EnsureInitialized();
+
+            return s_categories.ToImmutableDictionary(catagory => catagory, catagory => GetCategoryItems(catagory));
+
+            static ImmutableArray<AllColorableItemInfo> GetCategoryItems(Guid category)
+            {
+                if (s_fontsAndColorDefaultsProvider.GetObject(category, out var obj) != VSConstants.S_OK)
+                {
+                    return ImmutableArray<AllColorableItemInfo>.Empty;
+                }
+
+                var fontAndColorDefaults = (IVsFontAndColorDefaults)obj;
+                if (fontAndColorDefaults.GetItemCount(out var count) != VSConstants.S_OK)
+                {
+                    return ImmutableArray<AllColorableItemInfo>.Empty;
+                }
+
+                var builder = ImmutableArray.CreateBuilder<AllColorableItemInfo>();
+
+                var items = new AllColorableItemInfo[1];
+                for (var index = 0; index < count; index++)
+                {
+                    if (fontAndColorDefaults.GetItem(index, items) == VSConstants.S_OK)
+                    {
+                        builder.Add(items[0]);
+                    }
+                }
+
+                return builder.ToImmutable();
+            }
+        }
+
+        public static (Color Foreground, Color Background) GetPlainTextColors()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            EnsureInitialized();
+
+            if (s_fontsAndColorStorage.OpenCategory(TextEditorManagerCategory, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
+            {
+                return DefaultTextColors;
+            }
+
+            try
+            {
+                var colorItems = new ColorableItemInfo[1];
+                if (s_fontsAndColorStorage.GetItem("Plain Text", colorItems) != VSConstants.S_OK)
+                {
+                    return DefaultTextColors;
+                }
+
+                var colorItem = colorItems[0];
+
+                var foreground = TryGetColor(colorItem.crForeground) ?? DefaultTextColors.Foreground;
+                var background = TryGetColor(colorItem.crBackground) ?? DefaultTextColors.Background;
+
+                return (foreground, background);
+            }
+            finally
+            {
+                s_fontsAndColorStorage.CloseCategory();
+            }
+        }
+
+        public static (FontFamily FontFamily, double FontSize) GetEditorFontInfo()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            EnsureInitialized();
 
             var fontsAndColorStorage = ServiceProvider.GlobalProvider.GetService<SVsFontAndColorStorage, IVsFontAndColorStorage>();
             if (fontsAndColorStorage is null)
@@ -30,7 +117,7 @@ namespace Carnation
             }
 
             // Open Text Editor category for readonly access.
-            if (fontsAndColorStorage.OpenCategory(TextEditorMEFItemsColorCategory, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS | __FCSTORAGEFLAGS.FCSF_NOAUTOCOLORS)) != VSConstants.S_OK)
+            if (fontsAndColorStorage.OpenCategory(TextEditorMEFItemsCategory, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
             {
                 return DefaultFontInfo;
             }
@@ -46,11 +133,11 @@ namespace Carnation
 
                 var fontFamily = fontInfo[0].bFaceNameValid == 1
                     ? new FontFamily(fontInfo[0].bstrFaceName)
-                    : DefaultFontFamily;
+                    : DefaultFontInfo.FontFamily;
 
                 var fontSize = fontInfo[0].bPointSizeValid == 1
                     ? Math.Abs(logFont[0].lfHeight) * GetDipsPerPixel()
-                    : DefaultFontSize;
+                    : DefaultFontInfo.FontSize;
 
                 return (fontFamily, fontSize);
             }
@@ -83,19 +170,17 @@ namespace Carnation
             {
                 s_fontsAndColorStorage = ServiceProvider.GlobalProvider.GetService<SVsFontAndColorStorage, IVsFontAndColorStorage>();
                 s_vsUIShell2 = ServiceProvider.GlobalProvider.GetService<SVsUIShell, IVsUIShell2>();
+                s_fontsAndColorDefaultsProvider = (IVsFontAndColorDefaultsProvider)ServiceProvider.GlobalProvider.GetService(Guid.Parse("DAF27B38-80B3-4C58-8133-AFD41C36C79A"));
             }
         }
 
-        public static ClassificationGridItem TryGetItemForClassification((string, string) classificationTypeNames, Color defaultForeground, Color defaultBackground)
+        public static ClassificationGridItem TryGetClassificationItemForInfo(Guid category, AllColorableItemInfo allColorableItemInfo)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             EnsureInitialized();
 
-            var (classificationTypeName, definitionName) = classificationTypeNames;
-
-            // Open Text Editor category for readonly access.
-            if (s_fontsAndColorStorage.OpenCategory(TextEditorMEFItemsColorCategory, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS | __FCSTORAGEFLAGS.FCSF_NOAUTOCOLORS)) != VSConstants.S_OK)
+            if (s_fontsAndColorStorage.OpenCategory(category, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
             {
                 // We were unable to access color information.
                 return null;
@@ -103,30 +188,29 @@ namespace Carnation
 
             try
             {
+                var definitionName = allColorableItemInfo.bstrName;
+
                 var colorItems = new ColorableItemInfo[1];
-                if (s_fontsAndColorStorage.GetItem(classificationTypeName, colorItems) != VSConstants.S_OK &&
-                    s_fontsAndColorStorage.GetItem(definitionName, colorItems) != VSConstants.S_OK)
+                if (s_fontsAndColorStorage.GetItem(definitionName, colorItems) != VSConstants.S_OK)
                 {
                     return null;
                 }
 
                 var colorItem = colorItems[0];
-
-                var foreground = TryGetColor(colorItem.crForeground, defaultForeground);
-                if (foreground == null)
-                {
-                    return null;
-                }
-
-                var background = TryGetColor(colorItem.crBackground, defaultBackground);
-                if (background == null)
-                {
-                    return null;
-                }
-
                 var isBold = ((FONTFLAGS)colorItem.dwFontFlags).HasFlag(FONTFLAGS.FF_BOLD);
+                var isForegroundEditable = ((__FCITEMFLAGS)allColorableItemInfo.fFlags).HasFlag(__FCITEMFLAGS.FCIF_ALLOWFGCHANGE);
+                var isBackgroundEditable = ((__FCITEMFLAGS)allColorableItemInfo.fFlags).HasFlag(__FCITEMFLAGS.FCIF_ALLOWBGCHANGE);
+                var isBoldEditable = ((__FCITEMFLAGS)allColorableItemInfo.fFlags).HasFlag(__FCITEMFLAGS.FCIF_ALLOWBOLDCHANGE);
 
-                return new ClassificationGridItem(classificationTypeName, definitionName, foreground.Value, background.Value, isBold);
+                return new ClassificationGridItem(
+                    category,
+                    definitionName,
+                    colorItem.crForeground,
+                    colorItem.crBackground,
+                    isBold,
+                    isForegroundEditable,
+                    isBackgroundEditable,
+                    isBoldEditable);
             }
             finally
             {
@@ -134,43 +218,7 @@ namespace Carnation
             }
         }
 
-        internal static (Color, Color) GetPlainTextColors()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            EnsureInitialized();
-
-            // Open Text Editor category for readonly access.
-            if (s_fontsAndColorStorage.OpenCategory(TextEditorMEFItemsColorCategory, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS | __FCSTORAGEFLAGS.FCSF_NOAUTOCOLORS)) != VSConstants.S_OK)
-            {
-                return DefaultTextColors;
-            }
-
-            try
-            {
-                var fontAndColorUtilities = (IVsFontAndColorUtilities)s_fontsAndColorStorage;
-
-                Color? foreground = null;
-                if (fontAndColorUtilities.EncodeIndexedColor(COLORINDEX.CI_USERTEXT_FG, out var foregroundCR) == VSConstants.S_OK)
-                {
-                    foreground = TryGetColor(foregroundCR, null);
-                }
-
-                Color? background = null;
-                if (fontAndColorUtilities.EncodeIndexedColor(COLORINDEX.CI_USERTEXT_BK, out var backgroundCR) == VSConstants.S_OK)
-                {
-                    background = TryGetColor(backgroundCR, null);
-                }
-
-                return (foreground ?? DefaultTextColors.Item1, background ?? DefaultTextColors.Item2);
-            }
-            finally
-            {
-                s_fontsAndColorStorage.CloseCategory();
-            }
-        }
-
-        private static Color? TryGetColor(uint colorRef, Color? defaultColor)
+        public static Color? TryGetColor(uint colorRef)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -185,7 +233,11 @@ namespace Carnation
 
             if (colorType == (int)__VSCOLORTYPE.CT_INVALID)
             {
-                return defaultColor;
+                return null;
+            }
+            else if (colorType == (int)__VSCOLORTYPE.CT_AUTOMATIC)
+            {
+                return null; 
             }
             else if (colorType == (int)__VSCOLORTYPE.CT_RAW)
             {
@@ -197,6 +249,12 @@ namespace Carnation
                 if (fontAndColorUtilities.GetEncodedIndex(colorRef, encodedIndex) == VSConstants.S_OK &&
                     fontAndColorUtilities.GetRGBOfIndex(encodedIndex[0], out var decoded) == VSConstants.S_OK)
                 {
+                    if (encodedIndex[0] == COLORINDEX.CI_SYSTEXT_BK ||
+                        encodedIndex[0] == COLORINDEX.CI_SYSTEXT_FG)
+                    {
+                        return null;
+                    }
+
                     win32Color = encodedIndex[0] == COLORINDEX.CI_USERTEXT_BK
                         ? decoded & 0x00ffffff
                         : decoded | 0xff000000;
@@ -235,9 +293,8 @@ namespace Carnation
 
             EnsureInitialized();
 
-            // Open Text Editor to make changes. Make sure LOADDEFAULTS is passed so any default 
-            // values can be modified as well.
-            if (s_fontsAndColorStorage.OpenCategory(TextEditorMEFItemsColorCategory, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
+            // Make sure LOADDEFAULTS is passed so any default values can be modified as well.
+            if (s_fontsAndColorStorage.OpenCategory(item.Category, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
             {
                 // We were unable to access color information.
                 return;
@@ -258,8 +315,8 @@ namespace Carnation
 
                 var colorItem = colorItems[0];
 
-                colorItem.crForeground = ToWin32Color(item.Foreground);
-                colorItem.crBackground = ToWin32Color(item.Background);
+                colorItem.crForeground = item.ForegroundColorRef;
+                colorItem.crBackground = item.BackgroundColorRef;
 
                 colorItem.dwFontFlags = item.IsBold
                     ? (uint)FONTFLAGS.FF_BOLD
@@ -274,6 +331,13 @@ namespace Carnation
             {
                 s_fontsAndColorStorage.CloseCategory();
             }
+        }
+
+        internal static uint GetColorRef(Color color, Color defaultColor)
+        {
+            return (color == defaultColor)
+                ? InvalidColorRef
+                : ToWin32Color(color);
 
             uint ToWin32Color(Color color)
             {
@@ -281,60 +345,71 @@ namespace Carnation
             }
         }
 
-        internal static void ResetClassificationItem(ClassificationGridItem item, Color defaultForeground, Color defaultBackground)
+        internal static void RefreshClassificationItem(ClassificationGridItem item)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             EnsureInitialized();
 
-            // Open Text Editor to make changes.
-            if (s_fontsAndColorStorage.OpenCategory(TextEditorMEFItemsColorCategory, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS | __FCSTORAGEFLAGS.FCSF_NOAUTOCOLORS)) != VSConstants.S_OK)
+            if (s_fontsAndColorStorage.OpenCategory(item.Category, (uint)(__FCSTORAGEFLAGS.FCSF_READONLY | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
             {
                 return;
             }
 
             try
             {
-                var itemName = item.Classification;
                 var colorItems = new ColorableItemInfo[1];
-                if (s_fontsAndColorStorage.GetItem(item.Classification, colorItems) != VSConstants.S_OK)
-                {
-                    itemName = item.DefinitionName;
-                    if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
-                    {
-                        return;
-                    }
-                }
-
-                if (((IVsFontAndColorStorage2)s_fontsAndColorStorage).RevertItemToDefault(itemName) != VSConstants.S_OK)
-                {
-                    throw new Exception();
-                }
-
-                if (s_fontsAndColorStorage.GetItem(itemName, colorItems) != VSConstants.S_OK)
+                if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
                 {
                     return;
                 }
 
                 var colorItem = colorItems[0];
 
-                var foreground = TryGetColor(colorItem.crForeground, defaultForeground);
-                if (foreground == null)
+                item.ForegroundColorRef = colorItem.crForeground;
+                item.BackgroundColorRef = colorItem.crBackground;
+                item.IsBold = ((FONTFLAGS)colorItem.dwFontFlags).HasFlag(FONTFLAGS.FF_BOLD);
+            }
+            finally
+            {
+                s_fontsAndColorStorage.CloseCategory();
+            }
+        }
+
+        internal static void ResetClassificationItem(ClassificationGridItem item)
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            EnsureInitialized();
+
+            if (s_fontsAndColorStorage.OpenCategory(item.Category, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
+            {
+                return;
+            }
+
+            try
+            {
+                var colorItems = new ColorableItemInfo[1];
+                if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
                 {
                     return;
                 }
 
-                var background = TryGetColor(colorItem.crBackground, defaultBackground);
-                if (background == null)
+                if (((IVsFontAndColorStorage2)s_fontsAndColorStorage).RevertItemToDefault(item.DefinitionName) != VSConstants.S_OK)
+                {
+                    throw new Exception();
+                }
+
+                if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
                 {
                     return;
                 }
 
-                var isBold = ((FONTFLAGS)colorItem.dwFontFlags).HasFlag(FONTFLAGS.FF_BOLD);
+                var colorItem = colorItems[0];
 
-                item.Foreground = foreground.Value;
-                item.Background = background.Value;
-                item.IsBold = isBold;
+                item.ForegroundColorRef = colorItem.crForeground;
+                item.BackgroundColorRef = colorItem.crBackground;
+                item.IsBold = ((FONTFLAGS)colorItem.dwFontFlags).HasFlag(FONTFLAGS.FF_BOLD);
             }
             finally
             {
@@ -348,22 +423,31 @@ namespace Carnation
 
             EnsureInitialized();
 
-            // Open Text Editor to make changes.
-            if (s_fontsAndColorStorage.OpenCategory(TextEditorMEFItemsColorCategory, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES)) != VSConstants.S_OK)
+            foreach (var category in s_categories)
             {
-                return;
+                ResetCategoryItems(category);
             }
 
-            try
+            return;
+
+            static void ResetCategoryItems(Guid category)
             {
-                if (((IVsFontAndColorStorage2)s_fontsAndColorStorage).RevertAllItemsToDefault() != VSConstants.S_OK)
+                if (s_fontsAndColorStorage.OpenCategory(category, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES)) != VSConstants.S_OK)
                 {
-                    throw new Exception();
+                    return;
                 }
-            }
-            finally
-            {
-                s_fontsAndColorStorage.CloseCategory();
+
+                try
+                {
+                    if (((IVsFontAndColorStorage2)s_fontsAndColorStorage).RevertAllItemsToDefault() != VSConstants.S_OK)
+                    {
+                        throw new Exception();
+                    }
+                }
+                finally
+                {
+                    s_fontsAndColorStorage.CloseCategory();
+                }
             }
         }
     }

@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="Converters\ContrastRatioConverter.cs" />
     <Compile Include="Converters\HueToColorConverter.cs" />
+    <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
     <Compile Include="Helpers\ControlExtensions.cs" />
     <Compile Include="Helpers\SavedColorsManager.cs" />
@@ -73,13 +74,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CarnationPackage.vsct</DependentUpon>
     </Compile>
-    <Compile Include="Models\ClassificationGridItem.cs" />
+    <Compile Include="Models\ClassificationProvider.ClassificationGridItem.cs" />
     <Compile Include="Helpers\ClassificationHelpers.cs" />
     <Compile Include="Helpers\ColorHelpers.cs" />
-    <Compile Include="Models\ColorItemBase.cs" />
+    <Compile Include="Models\ClassificationProvider.cs" />
+    <Compile Include="Models\ClassificationProvider.ColorItemBase.cs" />
     <Compile Include="Converters\ColorToBrushConverter.cs" />
     <Compile Include="Helpers\FontsAndColorsHelpers.cs" />
-    <Compile Include="Models\ItemPropertiesGridItem.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="MainWindowCommand.cs" />
     <Compile Include="MainWindowControl.xaml.cs">

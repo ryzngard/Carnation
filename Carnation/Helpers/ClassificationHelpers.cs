@@ -15,16 +15,16 @@ namespace Carnation
     {
         private static readonly HashSet<string> s_ignoredClassifications = new HashSet<string> { "(TRANSIENT)", "formal language" };
 
-        public static ImmutableArray<(string, string)> GetClassificationNames()
+        public static ImmutableDictionary<string, string> GetClassificationNameMap()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             return VSServiceHelpers.GetMefExports<EditorFormatDefinition>()
                 .Select(definition => definition.GetType())
                 .Where(type => type.GetCustomAttribute<UserVisibleAttribute>()?.UserVisible == true)
-                .Select(type => (type.GetCustomAttribute<ClassificationTypeAttribute>()?.ClassificationTypeNames, type.GetCustomAttribute<NameAttribute>()?.Name))
-                .Where(names => !string.IsNullOrEmpty(names.ClassificationTypeNames) && !string.IsNullOrEmpty(names.Name))
-                .ToImmutableArray();
+                .Select(type => (type.GetCustomAttribute<NameAttribute>()?.Name, type.GetCustomAttribute<ClassificationTypeAttribute>()?.ClassificationTypeNames))
+                .Where(names => !string.IsNullOrEmpty(names.Name))
+                .ToImmutableDictionary(t => t.Name, t => t.ClassificationTypeNames ?? t.Name);
         }
 
         public static ImmutableArray<string> GetClassificationsForSpan(IWpfTextView view, Span span)

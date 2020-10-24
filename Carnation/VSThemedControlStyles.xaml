@@ -142,6 +142,11 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" Value="{DynamicResource {x:Static vsui:HeaderColors.MouseOverBrushKey}}"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="DataGridRowHeader">
@@ -156,10 +161,20 @@
         <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"></Setter>
         <Setter Property="Background" Value="{DynamicResource {x:Static vsui:HeaderColors.DefaultBrushKey}}"></Setter>
         <Setter Property="BorderThickness" Value="0" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsui:CommonControlsColors.TextBoxBorderFocusedBrushKey}}"/>
+            </Trigger>
+        </Style.Triggers>
+
     </Style>
 
     <Style TargetType="DataGridCell">
         <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style TargetType="DockPanel">
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandShelfBackgroundGradientBeginKey}}" />
     </Style>
 
 </ResourceDictionary>

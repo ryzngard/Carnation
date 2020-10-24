@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text.Classification;
@@ -25,18 +28,13 @@ namespace Carnation
             _activeWindowTracker = new ActiveWindowTracker();
             _activeWindowTracker.PropertyChanged += ActiveWindowPropertyChanged;
 
-            var classificationFormatMapService = VSServiceHelpers.GetMefExport<IClassificationFormatMapService>();
-            var classificationFormatMap = classificationFormatMapService.GetClassificationFormatMap("text");
-            classificationFormatMap.ClassificationFormatMappingChanged += (object s, EventArgs e) => ReloadClassifications();
+            var editorFormatMapService = VSServiceHelpers.GetMefExport<IEditorFormatMapService>();
+            var editorFormatMap = editorFormatMapService.GetEditorFormatMap("text");
+            editorFormatMap.FormatMappingChanged += (object s, FormatItemsEventArgs e) => UpdateClassifications(e.ChangedItems);
 
-            VSColorTheme.ThemeChanged += (ThemeChangedEventArgs _) => ReloadClassifications();
-
-            ReloadClassifications();
-
-            void ReloadClassifications()
+            void UpdateClassifications(ReadOnlyCollection<string> definitionNames)
             {
-                ClassificationsGrid.ApplyTemplate();
-                _viewModel.OnThemeChanged();
+                _viewModel.OnThemeChanged(definitionNames.ToLookup(name => name));
             }
         }
 
