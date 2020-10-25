@@ -23,6 +23,7 @@
                 <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
                 <local:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
                 <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+                <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
                 <sys:Double x:Key="ColorSelectorWidth">30</sys:Double>
 
                 <DataTemplate DataType="{x:Type Color}" x:Key="ColorSelectorItemTemplate">
@@ -92,6 +93,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content=""
+                                Visibility="{Binding IsForegroundEditable, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" 
                                 Background="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
                                 Command="{Binding ElementName=MyToolWindow, Path=DataContext.EditForegroundCommand}" 
                                 CommandParameter="{Binding Path=.}" />
@@ -103,6 +105,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content=""
+                                Visibility="{Binding IsBackgroundEditable, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" 
                                 Background="{Binding Background, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" 
                                 Command="{Binding ElementName=MyToolWindow, Path=DataContext.EditBackgroundCommand}" 
                                 CommandParameter="{Binding Path=.}" />

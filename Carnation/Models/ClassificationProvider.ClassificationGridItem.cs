@@ -32,11 +32,20 @@ namespace Carnation
                 string definitionName,
                 uint foregroundColorRef,
                 uint backgroundColorRef,
+                uint autoForegroundColorRef,
+                uint autoBackgroundColorRef,
                 bool isBold,
                 bool isForegroundEditable,
                 bool isBackgroundEditable,
                 bool isBoldEditable)
-                : base(foregroundColorRef, backgroundColorRef, isBold, isForegroundEditable, isBackgroundEditable, isBoldEditable)
+                : base(foregroundColorRef,
+                       backgroundColorRef,
+                       autoForegroundColorRef,
+                       autoBackgroundColorRef,
+                       isBold,
+                       isForegroundEditable,
+                       isBackgroundEditable,
+                       isBoldEditable)
             {
                 _category = category;
                 _definitionName = definitionName;

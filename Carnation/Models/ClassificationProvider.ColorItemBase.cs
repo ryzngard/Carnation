@@ -21,14 +21,27 @@ namespace Carnation
             public Color Foreground
             {
                 get => IsForegroundEditable
-                    ? FontsAndColorsHelper.TryGetColor(ForegroundColorRef) ?? PlainTextForeground
+                    ? FontsAndColorsHelper.TryGetColor(ForegroundColorRef) ?? DefaultForeground
                     : Colors.Transparent;
                 set
                 {
                     Contract.Assert(IsUpdating || IsForegroundEditable);
-                    ForegroundColorRef = FontsAndColorsHelper.GetColorRef(value, PlainTextForeground);
+                    ForegroundColorRef = FontsAndColorsHelper.GetColorRef(value, DefaultForeground);
                 }
             }
+
+            private uint _autoForegroundColorRef;
+            public uint AutoForegroundColorRef
+            {
+                get => _autoForegroundColorRef;
+                set
+                {
+                    _autoForegroundColorRef = value;
+                    NotifyPropertyChanged(nameof(DefaultForeground));
+                }
+            }
+
+            public Color DefaultForeground => FontsAndColorsHelper.TryGetColor(AutoForegroundColorRef) ?? PlainTextForeground;
 
             private bool _isForegroundEditable = true;
             public bool IsForegroundEditable
@@ -51,14 +64,27 @@ namespace Carnation
             public Color Background
             {
                 get => IsBackgroundEditable
-                    ? FontsAndColorsHelper.TryGetColor(BackgroundColorRef) ?? PlainTextBackground
+                    ? FontsAndColorsHelper.TryGetColor(BackgroundColorRef) ?? DefaultBackground
                     : Colors.Transparent;
                 set
                 {
                     Contract.Assert(IsUpdating || IsBackgroundEditable);
-                    BackgroundColorRef = FontsAndColorsHelper.GetColorRef(value, PlainTextBackground);
+                    BackgroundColorRef = FontsAndColorsHelper.GetColorRef(value, DefaultBackground);
                 }
             }
+
+            private uint _autoBackgroundColorRef;
+            public uint AutoBackgroundColorRef
+            {
+                get => _autoBackgroundColorRef;
+                set
+                {
+                    _autoBackgroundColorRef = value;
+                    NotifyPropertyChanged(nameof(DefaultBackground));
+                }
+            }
+
+            public Color DefaultBackground => FontsAndColorsHelper.TryGetColor(AutoBackgroundColorRef) ?? PlainTextBackground;
 
             private bool _isBackgroundEditable = true;
             public bool IsBackgroundEditable
@@ -102,6 +128,8 @@ namespace Carnation
             protected ColorItemBase(
                 uint foregroundColorRef,
                 uint backgroundColorRef,
+                uint autoForegroundColorRef,
+                uint autoBackgroundColorRef,
                 bool isBold,
                 bool isForegroundEditable,
                 bool isBackgroundEditable,
@@ -109,6 +137,8 @@ namespace Carnation
             {
                 _foregroundColorRef = foregroundColorRef;
                 _backgroundColorRef = backgroundColorRef;
+                _autoForegroundColorRef = autoForegroundColorRef;
+                _autoBackgroundColorRef = autoBackgroundColorRef;
                 _isBold = isBold;
                 _isForegroundEditable = isForegroundEditable;
                 _isBackgroundEditable = isBackgroundEditable;
@@ -132,8 +162,9 @@ namespace Carnation
             {
                 if (!IsForegroundEditable || !IsBackgroundEditable)
                 {
-                    ContrastRatio = "N/A";
-                    ContrastRating = "N/A";
+                    ContrastRatio = "";
+                    ContrastRating = "";
+                    return;
                 }
 
                 var contrast = ColorHelpers.GetContrast(Foreground, Background);

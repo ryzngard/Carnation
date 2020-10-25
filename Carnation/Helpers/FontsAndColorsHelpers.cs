@@ -207,6 +207,8 @@ namespace Carnation
                     definitionName,
                     colorItem.crForeground,
                     colorItem.crBackground,
+                    allColorableItemInfo.crAutoForeground,
+                    allColorableItemInfo.crAutoBackground,
                     isBold,
                     isForegroundEditable,
                     isBackgroundEditable,
@@ -302,15 +304,10 @@ namespace Carnation
 
             try
             {
-                var itemName = item.Classification;
                 var colorItems = new ColorableItemInfo[1];
-                if (s_fontsAndColorStorage.GetItem(item.Classification, colorItems) != VSConstants.S_OK)
+                if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
                 {
-                    itemName = item.DefinitionName;
-                    if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
-                    {
-                        return;
-                    }
+                    return;
                 }
 
                 var colorItem = colorItems[0];
@@ -322,7 +319,7 @@ namespace Carnation
                     ? (uint)FONTFLAGS.FF_BOLD
                     : (uint)FONTFLAGS.FF_DEFAULT;
 
-                if (s_fontsAndColorStorage.SetItem(itemName, new[] { colorItem }) != VSConstants.S_OK)
+                if (s_fontsAndColorStorage.SetItem(item.DefinitionName, new[] { colorItem }) != VSConstants.S_OK)
                 {
                     throw new Exception();
                 }
@@ -345,7 +342,7 @@ namespace Carnation
             }
         }
 
-        internal static void RefreshClassificationItem(ClassificationGridItem item)
+        internal static void RefreshClassificationItem(ClassificationGridItem item, AllColorableItemInfo allColorableItemInfo)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -366,6 +363,8 @@ namespace Carnation
 
                 var colorItem = colorItems[0];
 
+                item.AutoForegroundColorRef = allColorableItemInfo.crAutoForeground;
+                item.AutoBackgroundColorRef = allColorableItemInfo.crAutoBackground;
                 item.ForegroundColorRef = colorItem.crForeground;
                 item.BackgroundColorRef = colorItem.crBackground;
                 item.IsBold = ((FONTFLAGS)colorItem.dwFontFlags).HasFlag(FONTFLAGS.FF_BOLD);

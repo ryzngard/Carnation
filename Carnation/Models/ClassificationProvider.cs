@@ -37,9 +37,16 @@ namespace Carnation
                 IsUpdating = true;
 
                 (PlainTextForeground, PlainTextBackground) = FontsAndColorsHelper.GetPlainTextColors();
+                var infos = FontsAndColorsHelper.GetTextEditorInfos()
+                    .ToImmutableDictionary(
+                        kvp => kvp.Key,
+                        kvp => kvp.Value
+                            .Where(info => definitionNames.Contains(info.bstrName))
+                            .ToImmutableDictionary(info => info.bstrName));
+
                 foreach (var item in GridItems.Where(item => definitionNames.Contains(item.DefinitionName)))
                 {
-                    FontsAndColorsHelper.RefreshClassificationItem(item);
+                    FontsAndColorsHelper.RefreshClassificationItem(item, infos[item.Category][item.DefinitionName]);
                 }
             }
             finally

@@ -60,6 +60,7 @@
     <Compile Include="ColorPicker\SaturationBrightnessPicker.xaml.cs">
       <DependentUpon>SaturationBrightnessPicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ContrastRatioConverter.cs" />
     <Compile Include="Converters\HueToColorConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
