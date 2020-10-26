@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/carnationextension/Carnation/_apis/build/status/ryzngard.Carnation?branchName=master)](https://dev.azure.com/carnationextension/Carnation/_build/latest?definitionId=1&branchName=master)
+
 # Carnation
 
 Merriam-Webster defines carnation as:
