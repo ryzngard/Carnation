@@ -5,6 +5,8 @@ Merriam-Webster defines carnation as:
 
 We define carnation as the best tool for managing the Visual Studio editor's syntax highlighting colors.
 
+![image](https://user-images.githubusercontent.com/611219/97203149-af04c200-1771-11eb-88ac-8be7dec33f71.png)
+
 ## How to Install
 
 ## How to Use
@@ -17,9 +19,13 @@ The classification grid will list all configurable classifications for the edito
 
 Since the list of classifications can be large and hard to navigate, we have included a searchbox which will allow you to quickly navigate to the classifications you want to customize.
 
+![image](https://user-images.githubusercontent.com/611219/97203229-c6dc4600-1771-11eb-8d97-d30358bfe710.png)
+
 ### Following the Cursor
 
 If you do not know the name for a classification you want to update, don't worry. We have a "Follow Cursor" option which will show you the classification at your cursor as well as all the classifications within your editor's selection.
+
+![image](https://user-images.githubusercontent.com/611219/97203274-d2c80800-1771-11eb-9fe4-44cb10331a11.png)
 
 ## Accessibility Features
 
