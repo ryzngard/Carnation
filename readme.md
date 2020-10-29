@@ -11,6 +11,8 @@ We define carnation as the best tool for managing the Visual Studio editor's syn
 
 ## How to Install
 
+[Download from the marketplace](https://marketplace.visualstudio.com/items?itemName=ryzngard.carnation-colorpicker)
+
 ## How to Use
 
 ### Classification Grid
@@ -36,3 +38,5 @@ If you do not know the name for a classification you want to update, don't worry
 Carnation wants to help you make your code easy to read by making the contrast ratio of your color choices visible at all times. In the Classification Grid you will see the contrast ratio as well as whether the contrast meets WCAG 2.0 requirements.
 
 ## How to Remove
+
+Uninstall the extension in VS 
