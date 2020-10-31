@@ -65,6 +65,7 @@
     <Compile Include="Converters\HueToColorConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
+    <Compile Include="Helpers\ContrastHelpers.cs" />
     <Compile Include="Helpers\ControlExtensions.cs" />
     <Compile Include="Helpers\SavedColorsManager.cs" />
     <Compile Include="Helpers\UnsafeNativeMethods.cs" />

@@ -13,27 +13,98 @@ namespace Carnation
         {
             var L1 = color.ToLuminance();
             var L2 = otherColor.ToLuminance();
-            return L1 > L2
-                ? (L1 + 0.05) / (L2 + 0.05)
-                : (L2 + 0.05) / (L1 + 0.05);
+            return GetContrast(L1, L2);
+        }
+
+        // https://www.w3.org/TR/WCAG20/#contrast-ratiodef
+        public static double GetContrast(byte r, byte g, byte b, Color otherColor)
+        {
+            var L1 = GetLuminance(r, g, b);
+            var L2 = otherColor.ToLuminance();
+            return GetContrast(L1, L2);
+        }
+
+        public static double GetContrast(double luminance1, double luminance2)
+        {
+            return luminance1 > luminance2
+                ? (luminance1 + 0.05) / (luminance2 + 0.05)
+                : (luminance2 + 0.05) / (luminance1 + 0.05);
         }
 
         // https://www.w3.org/TR/WCAG20/#relativeluminancedef
         public static double ToLuminance(this Color color)
         {
-            var R = color.ScR <= 0.03928
-                ? color.ScR / 12.92
-                : Math.Pow((color.ScR + 0.055) / 1.055, 2.4);
+            return GetLuminance(color.ScR, color.ScG, color.ScB);
+        }
 
-            var G = color.ScG <= 0.03928
-                ? color.ScG / 12.92
-                : Math.Pow((color.ScG + 0.055) / 1.055, 2.4);
+        public static double GetLuminance(byte r, byte g, byte b)
+        {
+            var scR = sRgbToScRgb(r);
+            var scG = sRgbToScRgb(g);
+            var scB = sRgbToScRgb(b);
 
-            var B = color.ScB <= 0.03928
-                ? color.ScB / 12.92
-                : Math.Pow((color.ScB + 0.055) / 1.055, 2.4);
+            return GetLuminance(scR, scG, scB);
+        }
+
+        // https://www.w3.org/TR/WCAG20/#relativeluminancedef
+        public static double GetLuminance(float scR, float scG, float scB)
+        {
+            var R = scR <= 0.03928
+                ? scR / 12.92
+                : Math.Pow((scR + 0.055) / 1.055, 2.4);
+
+            var G = scG <= 0.03928
+                ? scG / 12.92
+                : Math.Pow((scG + 0.055) / 1.055, 2.4);
+
+            var B = scB <= 0.03928
+                ? scB / 12.92
+                : Math.Pow((scB + 0.055) / 1.055, 2.4);
 
             return (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+        }
+
+        private static float sRgbToScRgb(byte bval)
+        {
+            var val = ((float)bval / 255.0f);
+
+            if (!(val > 0.0))       // Handles NaN case too. (Though, NaN isn't actually
+                                    // possible in this case.)
+            {
+                return (0.0f);
+            }
+            else if (val <= 0.04045)
+            {
+                return (val / 12.92f);
+            }
+            else if (val < 1.0f)
+            {
+                return (float)Math.Pow(((double)val + 0.055) / 1.055, 2.4);
+            }
+            else
+            {
+                return (1.0f);
+            }
+        }
+
+        // https://www.compuphase.com/cmetric.htm
+        public static double GetDistance(this Color color, Color otherColor)
+        {
+            var rmean = ((long)color.R + (long)otherColor.R) / 2;
+            var dR = (long)color.R - (long)otherColor.R;
+            var dG = (long)color.G - (long)otherColor.G;
+            var dB = (long)color.B - (long)otherColor.B;
+            return Math.Sqrt((((512 + rmean) * dR * dR) >> 8) + 4 * dG * dG + (((767 - rmean) * dB * dB) >> 8));
+        }
+
+        // https://www.compuphase.com/cmetric.htm
+        public static double GetDistance(byte r, byte g, byte b, Color otherColor)
+        {
+            var rmean = ((long)r + (long)otherColor.R) / 2;
+            var dR = (long)r - (long)otherColor.R;
+            var dG = (long)g - (long)otherColor.G;
+            var dB = (long)b - (long)otherColor.B;
+            return Math.Sqrt((((512 + rmean) * dR * dR) >> 8) + 4 * dG * dG + (((767 - rmean) * dB * dB) >> 8));
         }
 
         /// <summary>

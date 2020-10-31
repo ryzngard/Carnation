@@ -27,6 +27,7 @@ namespace Carnation
             EditBackgroundCommand = new RelayCommand<ClassificationGridItem>(OnEditBackground);
             UseItemDefaultsCommand = new RelayCommand<ClassificationGridItem>(OnUseItemDefaults);
             ToggleIsBoldCommand = new RelayCommand<ClassificationGridItem>(OnToggleIsBold);
+            UseSuggestedForegroundCommand = new RelayCommand<ClassificationGridItem>(OnUseSuggestedForeground);
 
             foreach (var classificationItem in ClassificationProvider.GridItems)
             {
@@ -118,6 +119,8 @@ namespace Carnation
         public ICommand EditBackgroundCommand { get; }
         public ICommand UseItemDefaultsCommand { get; }
         public ICommand ToggleIsBoldCommand { get; }
+        public ICommand UseSuggestedForegroundCommand { get; }
+
         #endregion
 
         #region Public Methods
@@ -212,6 +215,19 @@ namespace Carnation
         private void OnUseItemDefaults(ClassificationGridItem item)
         {
             FontsAndColorsHelper.ResetClassificationItem(item);
+        }
+
+        private void OnUseSuggestedForeground(ClassificationGridItem item)
+        {
+            var suggestions = ContrastHelpers.FindSimilarAAColor(item.Foreground, item.Background);
+            if (suggestions.Length == 0)
+            {
+                item.HasContrastWarning = false;
+                return;
+            }
+
+            var topSuggestion = suggestions.OrderBy(suggestion => suggestion.Distance).First();
+            item.Foreground = topSuggestion.Color;
         }
 
         private void OnToggleIsBold(ClassificationGridItem item)

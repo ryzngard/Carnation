@@ -146,7 +146,7 @@
                 <DataGridTextColumn 
                     Header="Contrast"
                     IsReadOnly="True"
-                    Binding="{Binding ContrastRatio}">
+                    Binding="{Binding ContrastRatio, StringFormat=\{0:N2\}}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />
@@ -167,12 +167,20 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="Commands">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Use Defaults"
-                                Command="{Binding ElementName=MyToolWindow, Path=DataContext.UseItemDefaultsCommand}" 
-                                CommandParameter="{Binding Path=.}" />
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Fix Contrast"
+                                    Visibility="{Binding HasContrastWarning, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" 
+                                    Command="{Binding ElementName=MyToolWindow, Path=DataContext.UseSuggestedForegroundCommand}" 
+                                    CommandParameter="{Binding Path=.}"
+                                    Margin="0 0 4 0"/>
+
+                                <Button Content="Use Defaults"
+                                    Command="{Binding ElementName=MyToolWindow, Path=DataContext.UseItemDefaultsCommand}" 
+                                    CommandParameter="{Binding Path=.}" />
+                            </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
