@@ -172,7 +172,8 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
                                 <Button Content="Fix Contrast"
-                                    Visibility="{Binding HasContrastWarning, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}" 
+                                    Visibility="{Binding HasContrastWarning, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
+                                    ToolTip="Sets the Foreground to the nearest color with AA contrast against the Background."
                                     Command="{Binding ElementName=MyToolWindow, Path=DataContext.UseSuggestedForegroundCommand}" 
                                     CommandParameter="{Binding Path=.}"
                                     Margin="0 0 4 0"/>
