@@ -111,8 +111,8 @@ namespace Carnation
                 set => SetProperty(ref _isBoldEditable, value);
             }
 
-            private string _contrastRatio;
-            public string ContrastRatio
+            private double _contrastRatio;
+            public double ContrastRatio
             {
                 get => _contrastRatio;
                 set => SetProperty(ref _contrastRatio, value);
@@ -123,6 +123,13 @@ namespace Carnation
             {
                 get => _contrastRating;
                 set => SetProperty(ref _contrastRating, value);
+            }
+
+            private bool _hasContrastWarning;
+            public bool HasContrastWarning
+            {
+                get => _hasContrastWarning;
+                set => SetProperty(ref _hasContrastWarning, value);
             }
 
             protected ColorItemBase(
@@ -162,13 +169,15 @@ namespace Carnation
             {
                 if (!IsForegroundEditable || !IsBackgroundEditable)
                 {
-                    ContrastRatio = "";
+                    ContrastRatio = 0.0;
+                    HasContrastWarning = false;
                     ContrastRating = "";
                     return;
                 }
 
                 var contrast = ColorHelpers.GetContrast(Foreground, Background);
-                ContrastRatio = $"{contrast:N2}";
+                ContrastRatio = contrast;
+                HasContrastWarning = contrast < ContrastHelpers.AA_Contrast && contrast != 1.0;
                 ContrastRating = GetContrastSymbol(contrast);
                 return;
 
@@ -178,11 +187,11 @@ namespace Carnation
                     {
                         return "❌";
                     }
-                    else if (contrast < 4.5)
+                    else if (contrast < ContrastHelpers.AA_Contrast)
                     {
                         return "⚠️";
                     }
-                    else if (contrast < 7)
+                    else if (contrast < ContrastHelpers.AAA_Contrast)
                     {
                         return "AA";
                     }

@@ -170,7 +170,6 @@
     </Style>
 
     <Style TargetType="DataGridCell">
-        <Setter Property="Background" Value="{DynamicResource {x:Static vsui:HeaderColors.DefaultBrushKey}}"></Setter>
         <Setter Property="BorderThickness" Value="0" />
     </Style>
 
