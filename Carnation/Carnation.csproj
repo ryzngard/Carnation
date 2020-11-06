@@ -68,6 +68,7 @@
     <Compile Include="Helpers\ContrastHelpers.cs" />
     <Compile Include="Helpers\ControlExtensions.cs" />
     <Compile Include="Helpers\SavedColorsManager.cs" />
+    <Compile Include="Helpers\ThemeExporter.cs" />
     <Compile Include="Helpers\UnsafeNativeMethods.cs" />
     <Compile Include="Models\ActiveWindowTracker.cs" />
     <Compile Include="Converters\BoolToFontWeightConverter.cs" />
