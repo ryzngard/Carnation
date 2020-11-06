@@ -21,6 +21,13 @@ namespace Carnation
                 set => SetProperty(ref _definitionName, value);
             }
 
+            private bool _hasContrastWarning;
+            public bool HasContrastWarning
+            {
+                get => _hasContrastWarning;
+                set => SetProperty(ref _hasContrastWarning, value);
+            }
+
             public string Classification => ClassificationNameMap.ContainsKey(DefinitionName)
                 ? ClassificationNameMap[DefinitionName]
                 : DefinitionName;

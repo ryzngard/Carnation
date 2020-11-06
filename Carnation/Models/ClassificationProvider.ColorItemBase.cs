@@ -118,20 +118,6 @@ namespace Carnation
                 set => SetProperty(ref _contrastRatio, value);
             }
 
-            private string _contrastRating;
-            public string ContrastRating
-            {
-                get => _contrastRating;
-                set => SetProperty(ref _contrastRating, value);
-            }
-
-            private bool _hasContrastWarning;
-            public bool HasContrastWarning
-            {
-                get => _hasContrastWarning;
-                set => SetProperty(ref _hasContrastWarning, value);
-            }
-
             protected ColorItemBase(
                 uint foregroundColorRef,
                 uint backgroundColorRef,
@@ -170,36 +156,11 @@ namespace Carnation
                 if (!IsForegroundEditable || !IsBackgroundEditable)
                 {
                     ContrastRatio = 0.0;
-                    HasContrastWarning = false;
-                    ContrastRating = "";
                     return;
                 }
 
                 var contrast = ColorHelpers.GetContrast(Foreground, Background);
                 ContrastRatio = contrast;
-                HasContrastWarning = contrast < ContrastHelpers.AA_Contrast && contrast != 1.0;
-                ContrastRating = GetContrastSymbol(contrast);
-                return;
-
-                string GetContrastSymbol(double contrast)
-                {
-                    if (contrast < 3)
-                    {
-                        return "❌";
-                    }
-                    else if (contrast < ContrastHelpers.AA_Contrast)
-                    {
-                        return "⚠️";
-                    }
-                    else if (contrast < ContrastHelpers.AAA_Contrast)
-                    {
-                        return "AA";
-                    }
-                    else
-                    {
-                        return "AAA";
-                    }
-                }
             }
         }
     }
