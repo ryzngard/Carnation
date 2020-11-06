@@ -143,5 +143,14 @@ namespace Carnation
                 vm.CurrentEditorColor = vm.ForegroundColor;
             }
         }
+
+        private void SuggestedColor_Selected(object sender, RoutedEventArgs e)
+        {
+            var comboBox = (ComboBox)sender;
+            if (comboBox.SelectedItem is Color selectedColor)
+            {
+                _viewModel.ForegroundColor.Color = selectedColor;
+            }
+        }
     }
 }
