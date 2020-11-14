@@ -22,10 +22,9 @@ namespace Carnation
 
             _calculateSuggestedColors = new TimeLimitedAction(() =>
             {
-                var aaSuggestion = ContrastHelpers.FindSimilarAAColor(ForegroundColor.Color, BackgroundColor.Color);
-                var aaaSuggestion = ContrastHelpers.FindSimilarAAAColor(ForegroundColor.Color, BackgroundColor.Color);
-
-                var suggestedColors = aaaSuggestion.Concat(aaSuggestion);
+                var suggestedColors = UseExtraContrastSuggestions
+                    ? ContrastHelpers.FindSimilarAAAColor(ForegroundColor.Color, BackgroundColor.Color)
+                    : ContrastHelpers.FindSimilarAAColor(ForegroundColor.Color, BackgroundColor.Color);
 
                 SuggestedColors.Clear();
                 foreach (var suggestion in suggestedColors)
@@ -55,12 +54,19 @@ namespace Carnation
             CalculateContrast();
         }
 
+        private bool _useExtraContrastSuggestions;
+        public bool UseExtraContrastSuggestions
+        {
+            get => _useExtraContrastSuggestions;
+            set => SetProperty(ref _useExtraContrastSuggestions, value);
+        }
+
         private ObservableColor _currentEditorColor;
         public ObservableColor CurrentEditorColor
         {
             get => _currentEditorColor;
             set
-            { 
+            {
                 if (SetProperty(ref _currentEditorColor, value))
                 {
                     NotifyPropertyChanged(nameof(IsForegroundBeingEdited));
@@ -90,12 +96,25 @@ namespace Carnation
             set => SetProperty(ref _showSuggestedColors, value);
         }
 
-
         private double _contrastRatio;
         public double ContrastRatio
         {
             get => _contrastRatio;
             set => SetProperty(ref _contrastRatio, value);
+        }
+
+        private FontFamily _sampleTextFontFamily;
+        public FontFamily SampleTextFontFamily
+        {
+            get => _sampleTextFontFamily;
+            set => SetProperty(ref _sampleTextFontFamily, value);
+        }
+
+        private double _sampleTextFontSize;
+        public double SampleTextFontSize
+        {
+            get => _sampleTextFontSize;
+            set => SetProperty(ref _sampleTextFontSize, value);
         }
 
         public void SetForegroundColor(Color color)
@@ -104,7 +123,7 @@ namespace Carnation
         }
 
         public void SetBackgroundColor(Color color)
-        {                
+        {
             BackgroundColor.Color = color;
         }
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Carnation.Helpers;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell.Settings;
@@ -19,13 +20,7 @@ namespace Carnation
 
         public static async Task<ImmutableArray<Color>> GetColorsAsync()
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            var serviceProvder = MainWindowCommand.Instance.ServiceProvider;
-            var svc = await serviceProvder.GetServiceAsync(typeof(SVsSettingsManager)) as IVsSettingsManager;
-
-            var settingsManager = new ShellSettingsManager(svc);
-            var settingsStore = settingsManager.GetReadOnlySettingsStore(Microsoft.VisualStudio.Settings.SettingsScope.UserSettings);
+            var settingsStore = await OptionsHelper.GetReadonlySettingsStoreAsync();
 
             if (!settingsStore.CollectionExists(CollectionName))
             {
@@ -56,13 +51,7 @@ namespace Carnation
 
         public static async System.Threading.Tasks.Task SaveColorAsync(Color color, int index)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-            var serviceProvder = MainWindowCommand.Instance.ServiceProvider;
-            var svc = await serviceProvder.GetServiceAsync(typeof(SVsSettingsManager)) as IVsSettingsManager;
-
-            var settingsManager = new ShellSettingsManager(svc);
-            var settingsStore = settingsManager.GetWritableSettingsStore(Microsoft.VisualStudio.Settings.SettingsScope.UserSettings);
+            var settingsStore = await OptionsHelper.GetWritableSettingsStoreAsync();
 
             if (!settingsStore.CollectionExists(CollectionName))
             {

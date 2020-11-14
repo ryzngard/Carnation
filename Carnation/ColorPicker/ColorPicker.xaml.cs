@@ -30,6 +30,24 @@ namespace Carnation
             typeof(ColorPicker),
             new PropertyMetadata(false, OnEditBackgroundChanged));
 
+        public static readonly DependencyProperty UseExtraContrastSuggestionsProperty = DependencyProperty.Register(
+            nameof(UseExtraContrastSuggestions),
+            typeof(bool),
+            typeof(ColorPicker),
+            new PropertyMetadata(false, OnUseExtraContrastSuggestionsChanged));
+
+        public static readonly DependencyProperty SampleTextFontFamilyProperty = DependencyProperty.Register(
+            nameof(SampleTextFontFamily),
+            typeof(FontFamily),
+            typeof(ColorPicker),
+            new PropertyMetadata(FontsAndColorsHelper.DefaultFontInfo.FontFamily, OnSampleTextFontFamilyChanged));
+
+        public static readonly DependencyProperty SampleTextFontSizeProperty = DependencyProperty.Register(
+            nameof(SampleTextFontSize),
+            typeof(double),
+            typeof(ColorPicker),
+            new PropertyMetadata(FontsAndColorsHelper.DefaultFontInfo.FontSize, OnSampleTextFontSizeChanged));
+
         private readonly ColorPickerViewModel _viewModel;
 
         public ColorPicker()
@@ -107,6 +125,24 @@ namespace Carnation
             set => SetValue(EditBackgroundColorProperty, value);
         }
 
+        public bool UseExtraContrastSuggestions
+        {
+            get => (bool)GetValue(UseExtraContrastSuggestionsProperty);
+            set => SetValue(UseExtraContrastSuggestionsProperty, value);
+        }
+
+        public FontFamily SampleTextFontFamily
+        {
+            get => (FontFamily)GetValue(SampleTextFontFamilyProperty);
+            set => SetValue(SampleTextFontFamilyProperty, value);
+        }
+
+        public double SampleTextFontSize
+        {
+            get => (double)GetValue(SampleTextFontSizeProperty);
+            set => SetValue(SampleTextFontSizeProperty, value);
+        }
+
         private void SelectAllText(object sender, RoutedEventArgs e)
         {
             if (sender is TextBox textBox)
@@ -142,6 +178,27 @@ namespace Carnation
             {
                 vm.CurrentEditorColor = vm.ForegroundColor;
             }
+        }
+
+        private static void OnUseExtraContrastSuggestionsChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            var colorPicker = (ColorPicker)o;
+            var vm = (ColorPickerViewModel)colorPicker.DataContext;
+            vm.UseExtraContrastSuggestions = (bool)e.NewValue;
+        }
+
+        private static void OnSampleTextFontFamilyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            var colorPicker = (ColorPicker)o;
+            var vm = (ColorPickerViewModel)colorPicker.DataContext;
+            vm.SampleTextFontFamily = (FontFamily)e.NewValue;
+        }
+
+        private static void OnSampleTextFontSizeChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            var colorPicker = (ColorPicker)o;
+            var vm = (ColorPickerViewModel)colorPicker.DataContext;
+            vm.SampleTextFontSize = (double)e.NewValue;
         }
 
         private void SuggestedColor_Selected(object sender, RoutedEventArgs e)

@@ -18,7 +18,7 @@ namespace Carnation
         private static readonly Guid TextEditorManagerCategory = new Guid("58E96763-1D3B-4E05-B6BA-FF7115FD0B7B");
         private static readonly Guid TextEditorMarkerCategory = new Guid("FF349800-EA43-46C1-8C98-878E78F46501");
 
-        private static readonly (FontFamily FontFamily, double FontSize) DefaultFontInfo = (new FontFamily("Consolas"), 13.0);
+        internal static readonly (FontFamily FontFamily, double FontSize) DefaultFontInfo = (new FontFamily("Consolas"), 13.0);
         private static readonly (Color Foreground, Color Background) DefaultTextColors = (Colors.Black, Colors.White);
 
         private static IVsFontAndColorStorage s_fontsAndColorStorage;
@@ -136,10 +136,10 @@ namespace Carnation
                     : DefaultFontInfo.FontFamily;
 
                 var fontSize = fontInfo[0].bPointSizeValid == 1
-                    ? Math.Abs(logFont[0].lfHeight) * GetDipsPerPixel()
+                    ? Math.Abs(fontInfo[0].wPointSize) * GetDipsPerPixel()
                     : DefaultFontInfo.FontSize;
 
-                return (fontFamily, fontSize);
+                return (fontFamily, DefaultFontInfo.FontSize);
             }
             finally
             {

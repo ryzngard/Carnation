@@ -16,6 +16,7 @@
         <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
         <local:ContrastRatioConverter x:Key="ContrastRatioConverter" />
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <local:ColorToTextWithoutAlpha x:Key="ColorToTextWithoutAlpha" />
 
         <!-- 
             The ThemedDialogTextBoxStyleKey has an exception introduced when it's used. ErrorTemplate and ThemedDialogTextBoxStyle can be removed once the bug is fixed
@@ -201,8 +202,7 @@
                 Grid.Column="0" 
                 Content="Suggested Colors" 
                 x:Name="SuggestedColorsLabel" 
-                ToolTip="Suggested colors to meet AA/AAA standard for accessible contrast" 
-                Visibility="{Binding ShowSuggestedColors, Converter={StaticResource BoolToVisibilityConverter}}" />
+                ToolTip="Suggested colors to meet AA/AAA standard for accessible contrast" />
             <ComboBox 
                 x:Name="Suggested_Colors"
                 Grid.Row="9" 
@@ -211,7 +211,7 @@
                 AutomationProperties.LabeledBy="{Binding ElementName=SuggestedColorsLabel}"
                 ItemsSource="{Binding SuggestedColors}"
                 SelectionChanged="SuggestedColor_Selected"
-                Visibility="{Binding ShowSuggestedColors, Converter={StaticResource BoolToVisibilityConverter}}">
+                IsEnabled="{Binding ShowSuggestedColors}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel 
@@ -221,7 +221,9 @@
                                 <TextBlock 
                                     Foreground="{Binding Path=., Converter={StaticResource ColorToBrushConverter}}" 
                                     Margin="5"
-                                    Text="{Binding Path=.}" />
+                                    Text="{Binding Path=., Converter={StaticResource ColorToTextWithoutAlpha}, Mode=OneWay}"                     
+                                    FontFamily="{Binding SampleTextFontFamily}"
+                                    FontSize="{Binding SampleTextFontSize}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -239,7 +241,9 @@
                 <TextBlock 
                     Foreground="{Binding ForegroundColor.Color, Converter={StaticResource ColorToBrushConverter}}" 
                     Margin="10"
-                    Text="Sample Text" />
+                    Text="Sample Text"
+                    FontFamily="{Binding SampleTextFontFamily}"
+                    FontSize="{Binding SampleTextFontSize}"/>
             </StackPanel>
         </Grid>
     </Grid>

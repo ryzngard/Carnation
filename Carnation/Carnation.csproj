@@ -61,12 +61,14 @@
       <DependentUpon>SaturationBrightnessPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\ColorToTextWithoutAlpha.cs" />
     <Compile Include="Converters\ContrastRatioConverter.cs" />
     <Compile Include="Converters\HueToColorConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />
     <Compile Include="Helpers\ContrastHelpers.cs" />
     <Compile Include="Helpers\ControlExtensions.cs" />
+    <Compile Include="Helpers\OptionsHelper.cs" />
     <Compile Include="Helpers\SavedColorsManager.cs" />
     <Compile Include="Helpers\TimeLimitedAction.cs" />
     <Compile Include="Helpers\UnsafeNativeMethods.cs" />
@@ -99,6 +101,7 @@
     <Compile Include="Helpers\VSServiceHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

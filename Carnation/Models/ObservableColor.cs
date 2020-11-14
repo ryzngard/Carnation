@@ -32,24 +32,33 @@ namespace Carnation.Models
         }
 
         private string _hex;
+
+        /// <summary>
+        /// This value will always only be RGB, but can accept ARGB and optional # at the beginning
+        /// </summary>
         public string Hex
         {
             get => _hex;
             set
             {
                 var str = value.StartsWith("#")
-                    ? value
-                    : "#" + value;
+                    ? value.Substring(1)
+                    : value;
 
+                if (str.Length == 8)
+                {
+                    // Trim ARGB to RGB
+                    str = str.Substring(2);
+                }
+                
                 if (!SetProperty(ref _hex, str))
                 {
                     return;
                 }
 
-                // Accept either ARGB or RGB hex values, +1 for the # 
-                var isValidLength = _hex.Length == 9 || _hex.Length == 7;
-
-                if (isValidLength && uint.TryParse(str.TrimStart('#'), NumberStyles.HexNumber, CultureInfo.CurrentCulture.NumberFormat, out var argb))
+                // Accept either ARGB or RGB hex values
+                var isValidLength = _hex.Length == 6;
+                if (isValidLength && uint.TryParse(str, NumberStyles.HexNumber, CultureInfo.CurrentCulture.NumberFormat, out var argb))
                 {
                     if (_updateBehavior == UpdateBehavior.None)
                     {
