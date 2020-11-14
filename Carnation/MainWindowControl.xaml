@@ -50,9 +50,9 @@
             </StackPanel>-->
 
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Content="Import" Margin="4 4 0 0" />
-                <Button Content="Export" Margin="4 4 0 0" />
-                <Button Content="Reset Theme To Defaults" Margin="4 4 4 0" />
+                <Button Content="Import" Margin="4 4 0 0" Visibility="Collapsed" />
+                <Button Content="Export" Margin="4 4 0 0" Command="{Binding ExportThemeCommand}" />
+                <Button Content="Reset Theme To Defaults" Margin="4 4 4 0" Command="{Binding ResetAllToDefaultCommand}" />
             </StackPanel>
         </DockPanel>
 

@@ -71,6 +71,7 @@
     <Compile Include="Helpers\OptionsHelper.cs" />
     <Compile Include="Helpers\SavedColorsManager.cs" />
     <Compile Include="Helpers\TimeLimitedAction.cs" />
+    <Compile Include="Helpers\ThemeExporter.cs" />
     <Compile Include="Helpers\UnsafeNativeMethods.cs" />
     <Compile Include="Models\ActiveWindowTracker.cs" />
     <Compile Include="Converters\BoolToFontWeightConverter.cs" />

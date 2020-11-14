@@ -9,6 +9,7 @@ using Carnation.Helpers;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.Win32;
 using static Carnation.ClassificationProvider;
 
 namespace Carnation
@@ -39,6 +40,8 @@ namespace Carnation
             UseItemDefaultsCommand = new RelayCommand<ClassificationGridItem>(OnUseItemDefaults);
             ToggleIsBoldCommand = new RelayCommand<ClassificationGridItem>(OnToggleIsBold);
             UseSuggestedForegroundCommand = new RelayCommand<ClassificationGridItem>(OnUseSuggestedForeground);
+            ResetAllToDefaultCommand = new RelayCommand(OnResetAllToDefault);
+            ExportThemeCommand = new RelayCommand(OnExportTheme);
 
             foreach (var classificationItem in ClassificationProvider.GridItems)
             {
@@ -138,6 +141,8 @@ namespace Carnation
         public ICommand UseItemDefaultsCommand { get; }
         public ICommand ToggleIsBoldCommand { get; }
         public ICommand UseSuggestedForegroundCommand { get; }
+        public ICommand ResetAllToDefaultCommand { get; }
+        public ICommand ExportThemeCommand { get; }
 
         #endregion
 
@@ -305,6 +310,29 @@ namespace Carnation
                 item.Background = window.BackgroundColor;
             }
         }
+
+        private void OnResetAllToDefault()
+        {
+            FontsAndColorsHelper.ResetAllClassificationItems();
+        }
+
+        private void OnExportTheme()
+        {
+            var dialog = new SaveFileDialog
+            {
+                DefaultExt = "vssettings",
+                Title = "Export Theme",
+                AddExtension = true,
+                OverwritePrompt = true,
+                CheckPathExists = true
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                ThemeExporter.Export(dialog.FileName, ClassificationGridItems);
+            }
+        }
+
         #endregion
     }
 }

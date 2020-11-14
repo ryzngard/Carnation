@@ -104,7 +104,7 @@ namespace Carnation
             }
         }
 
-        public static (FontFamily FontFamily, double FontSize) GetEditorFontInfo()
+        public static (FontFamily FontFamily, double FontSize) GetEditorFontInfo(bool scaleFontSize = true)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -136,7 +136,9 @@ namespace Carnation
                     : DefaultFontInfo.FontFamily;
 
                 var fontSize = fontInfo[0].bPointSizeValid == 1
-                    ? Math.Abs(fontInfo[0].wPointSize) * GetDipsPerPixel()
+                    ? scaleFontSize
+                        ? Math.Abs(logFont[0].lfHeight) * GetDipsPerPixel()
+                        : fontInfo[0].wPointSize
                     : DefaultFontInfo.FontSize;
 
                 return (fontFamily, DefaultFontInfo.FontSize);
