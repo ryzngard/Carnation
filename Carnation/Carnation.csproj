@@ -102,7 +102,6 @@
     <Compile Include="Helpers\VSServiceHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".editorconfig" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
