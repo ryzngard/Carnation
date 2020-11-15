@@ -14,7 +14,7 @@ namespace Carnation
                 return $"{color.ToString().Substring(3)}";
             }
 
-            return null;
+            return string.Empty;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

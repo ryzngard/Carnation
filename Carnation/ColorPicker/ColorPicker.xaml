@@ -212,19 +212,34 @@
                 ItemsSource="{Binding SuggestedColors}"
                 SelectionChanged="SuggestedColor_Selected"
                 IsEnabled="{Binding ShowSuggestedColors}">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Background" Value="{Binding ElementName=Control, Path=DataContext.BackgroundColor.Color, Converter={StaticResource ColorToBrushConverter}}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=Control, Path=DataContext.IsForegroundBeingEdited}" Value="False">
+                                <Setter Property="Background" Value="{Binding Path=., Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="Center" 
-                            Background="{Binding BackgroundColor.Color, Converter={StaticResource ColorToBrushConverter}}">
-                                <TextBlock 
-                                    Foreground="{Binding Path=., Converter={StaticResource ColorToBrushConverter}}" 
-                                    Margin="5"
-                                    Text="{Binding Path=., Converter={StaticResource ColorToTextWithoutAlpha}, Mode=OneWay}"                     
-                                    FontFamily="{Binding SampleTextFontFamily}"
-                                    FontSize="{Binding SampleTextFontSize}"/>
-                        </StackPanel>
+                        <TextBlock 
+                            Foreground="{Binding ElementName=Control, Path=DataContext.ForegroundColor.Color, Converter={StaticResource ColorToBrushConverter}}"
+                            Text="{Binding Path=., Converter={StaticResource ColorToTextWithoutAlpha}, Mode=OneWay}"                     
+                            FontFamily="{Binding SampleTextFontFamily}"
+                            FontSize="{Binding SampleTextFontSize}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ElementName=Control, Path=DataContext.IsForegroundBeingEdited}" Value="True">
+                                            <Setter Property="Foreground" Value="{Binding Path=., Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
