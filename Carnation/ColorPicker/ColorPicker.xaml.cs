@@ -206,7 +206,7 @@ namespace Carnation
             var comboBox = (ComboBox)sender;
             if (comboBox.SelectedItem is Color selectedColor)
             {
-                _viewModel.ForegroundColor.Color = selectedColor;
+                _viewModel.CurrentEditorColor.Color = selectedColor;
             }
         }
     }

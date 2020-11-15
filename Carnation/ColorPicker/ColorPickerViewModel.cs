@@ -22,9 +22,17 @@ namespace Carnation
 
             _calculateSuggestedColors = new TimeLimitedAction(() =>
             {
+                var color1 = IsForegroundBeingEdited
+                    ? ForegroundColor.Color
+                    : BackgroundColor.Color;
+
+                var color2 = IsForegroundBeingEdited
+                    ? BackgroundColor.Color
+                    : ForegroundColor.Color;
+
                 var suggestedColors = UseExtraContrastSuggestions
-                    ? ContrastHelpers.FindSimilarAAAColor(ForegroundColor.Color, BackgroundColor.Color)
-                    : ContrastHelpers.FindSimilarAAColor(ForegroundColor.Color, BackgroundColor.Color);
+                    ? ContrastHelpers.FindSimilarAAAColor(color1, color2)
+                    : ContrastHelpers.FindSimilarAAColor(color1, color2);
 
                 SuggestedColors.Clear();
                 foreach (var suggestion in suggestedColors)
