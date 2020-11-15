@@ -14,7 +14,7 @@
         vs:ThemedDialogStyleLoader.UseDefaultThemedDialogStyles="True"
         vs2:ImageThemingUtilities.ThemeScrollBars="True"
         Background="{DynamicResource {x:Static vs:ThemedDialogColors.WindowPanelBrushKey}}"
-        Title="Color Picker" Height="580" Width="800">
+        Title="Color Picker" Height="620" Width="800">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Button" BasedOn="{StaticResource {x:Static vsfx:VsResourceKeys.ThemedDialogButtonStyleKey}}">
@@ -24,7 +24,7 @@
             </Style>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>

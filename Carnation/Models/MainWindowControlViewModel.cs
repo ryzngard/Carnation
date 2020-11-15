@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using Carnation.Helpers;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -18,6 +19,16 @@ namespace Carnation
         public MainWindowControlViewModel()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            var settingsStore = ThreadHelper.JoinableTaskFactory.Run(() => OptionsHelper.GetWritableSettingsStoreAsync());
+            if (settingsStore.TryGetBoolean(OptionsHelper.GeneralSettingsCollectionName, nameof(UseExtraContrastSuggestions), out var useExtraContrastSuggestions))
+            {
+                UseExtraContrastSuggestions = useExtraContrastSuggestions;
+            }
+            else
+            {
+                settingsStore.WriteBoolean(OptionsHelper.GeneralSettingsCollectionName, nameof(UseExtraContrastSuggestions), UseExtraContrastSuggestions);
+            }
 
             ClassificationGridView = CollectionViewSource.GetDefaultView(ClassificationGridItems);
             ClassificationGridView.Filter = o => FilterClassification((ClassificationGridItem)o);
@@ -90,6 +101,13 @@ namespace Carnation
             set => SetProperty(ref _fontSize, value);
         }
 
+        private bool _useExtraContrastSuggestions;
+        public bool UseExtraContrastSuggestions
+        {
+            get => _useExtraContrastSuggestions;
+            set => SetProperty(ref _useExtraContrastSuggestions, value);
+        }
+
         public ICollectionView ClassificationGridView { get; }
 
         public Color SelectedItemForeground
@@ -133,7 +151,11 @@ namespace Carnation
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
+            if (definitionNames.Contains("Plain Text"))
+            {
+                (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
+            }
+            
             ClassificationProvider.Refresh(definitionNames);
         }
 
@@ -200,7 +222,17 @@ namespace Carnation
                     NotifyPropertyChanged(nameof(SelectedItemBackground));
                     NotifyPropertyChanged(nameof(SelectedItemForeground));
                     break;
+
+                case nameof(UseExtraContrastSuggestions):
+                    ThreadHelper.JoinableTaskFactory.Run(UpdateUseExtraContrastOptionAsync);
+                    break;
             }
+        }
+
+        private async System.Threading.Tasks.Task UpdateUseExtraContrastOptionAsync()
+        {
+            var settingsStore = await OptionsHelper.GetWritableSettingsStoreAsync();
+            settingsStore.WriteBoolean(OptionsHelper.GeneralSettingsCollectionName, nameof(UseExtraContrastSuggestions), UseExtraContrastSuggestions);
         }
 
         private void OnSearchTextChanged()
@@ -219,12 +251,19 @@ namespace Carnation
 
         private void OnUseItemDefaults(ClassificationGridItem item)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+
             FontsAndColorsHelper.ResetClassificationItem(item);
         }
 
         private void OnUseSuggestedForeground(ClassificationGridItem item)
         {
-            var suggestions = ContrastHelpers.FindSimilarAAColor(item.Foreground, item.Background);
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var suggestions = UseExtraContrastSuggestions
+                ? ContrastHelpers.FindSimilarAAAColor(item.Foreground, item.Background)
+                : ContrastHelpers.FindSimilarAAColor(item.Foreground, item.Background);
             if (suggestions.Length == 0)
             {
                 item.HasContrastWarning = false;
@@ -242,17 +281,29 @@ namespace Carnation
 
         private void OnEditForeground(ClassificationGridItem item)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ShowColorPicker(item);
         }
 
         private void OnEditBackground(ClassificationGridItem item)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             ShowColorPicker(item, true);
         }
 
         private void ShowColorPicker(ClassificationGridItem item, bool editBackground = false)
         {
-            var window = new ColorPickerWindow(item.Foreground, item.Background, editBackground: editBackground);
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var window = new ColorPickerWindow(
+                item.Foreground,
+                item.Background,
+                UseExtraContrastSuggestions,
+                FontFamily,
+                FontSize,
+                editBackground: editBackground);
             if (window.ShowDialog() == true)
             {
                 item.Foreground = window.ForegroundColor;

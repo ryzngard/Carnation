@@ -40,10 +40,14 @@
 
         <!-- Import/Export row-->
         <DockPanel Grid.Row="0">
-            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left" Visibility="Collapsed">
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left">
+                <CheckBox IsChecked="{Binding UseExtraContrastSuggestions}" Content="Use Extra Contrast Suggestions" />
+            </StackPanel>
+            
+            <!--<StackPanel DockPanel.Dock="Center" Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Undo" Margin="4 4 0 0" />
                 <Button Content="Redo" Margin="4 4 0 0" />
-            </StackPanel>
+            </StackPanel>-->
 
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Content="Import" Margin="4 4 0 0" Visibility="Collapsed" />
@@ -75,7 +79,6 @@
                   SelectionMode="Single"
                   ItemsSource="{Binding ClassificationGridItems}"
                   SelectedItem="{Binding SelectedClassification}">
-
             <DataGrid.Columns>
                 <DataGridTextColumn 
                     Header="Display Items"
@@ -137,7 +140,7 @@
                                            Foreground="{Binding Foreground, Converter={StaticResource ColorToBrushConverter}, Mode=OneWay}"
                                            FontFamily="{Binding ElementName=MyToolWindow, Path=DataContext.FontFamily, Mode=OneWay}" 
                                            FontSize="{Binding ElementName=MyToolWindow, Path=DataContext.FontSize, Mode=OneWay}"
-                                           FontWeight="{Binding IsBold, Converter={StaticResource BoolToFontWeightConverter}, Mode=OneWay}" />
+                                           FontWeight="{Binding ElementName=MyToolWindow, Path=DataContext.IsBold, Converter={StaticResource BoolToFontWeightConverter}, Mode=OneWay}" />
                             </Grid>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

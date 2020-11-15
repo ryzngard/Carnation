@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Threading;
 
 namespace Carnation
 {
@@ -19,13 +16,22 @@ namespace Carnation
 
         private int _saveColorIndex = 0;
 
-        public ColorPickerWindow(Color foregroundColor, Color backgroundColor, bool editBackground = false)
+        public ColorPickerWindow(
+            Color foregroundColor,
+            Color backgroundColor,
+            bool useExtraContrastSuggestions,
+            FontFamily sampleFontFamily,
+            double sampleFontSize,
+            bool editBackground = false)
         {
             InitializeComponent();
 
             ColorPicker.ForegroundColor = foregroundColor;
             ColorPicker.BackgroundColor = backgroundColor;
             ColorPicker.EditBackgroundColor = editBackground;
+            ColorPicker.UseExtraContrastSuggestions = useExtraContrastSuggestions;
+            ColorPicker.SampleTextFontFamily = sampleFontFamily;
+            ColorPicker.SampleTextFontSize = sampleFontSize;
 
             SavedColors.Colors = ThreadHelper.JoinableTaskFactory.Run(() => SavedColorsManager.GetColorsAsync());
 
