@@ -41,7 +41,7 @@
         <!-- Import/Export row-->
         <DockPanel Grid.Row="0">
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left">
-                <CheckBox IsChecked="{Binding UseExtraContrastSuggestions}" Content="Use Extra Contrast Suggestions" />
+                <CheckBox Margin="4 8 0 0" IsChecked="{Binding UseExtraContrastSuggestions}" Content="Use Extra Contrast Suggestions" />
                 <Button Content="Apply All Foreground Suggestions" Margin="4 4 0 0" Command="{Binding UseAllForegroundSuggestionsCommand}" ToolTip="Sets all Foreground colors to the nearest with AA contrast against the Background." />
             </StackPanel>
 

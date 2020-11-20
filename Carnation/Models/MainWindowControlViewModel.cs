@@ -9,6 +9,7 @@ using Carnation.Helpers;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 using Microsoft.Win32;
 using static Carnation.ClassificationProvider;
 
@@ -201,7 +202,9 @@ namespace Carnation
                     continue;
                 }
 
-                item.HasContrastWarning = item.ContrastRatio < minimumContrastRatio;
+                item.HasContrastWarning = item.IsForegroundEditable
+                    && item.IsBackgroundEditable
+                    && item.ContrastRatio < minimumContrastRatio;
             }
         }
 
@@ -362,23 +365,32 @@ namespace Carnation
 
         private void OnUseAllForegroundSuggestions()
         {
-            foreach (var item in ClassificationGridItems)
-            {
-                if (item.HasContrastWarning)
+            var operationExecutor = VSServiceHelpers.GetMefExport<IUIThreadOperationExecutor>();
+            operationExecutor.Execute(
+                "Carnation",
+                "Applying all foreground color suggestions...",
+                allowCancellation: false,
+                showProgress: true,
+                (context) =>
                 {
-                    var suggestions = UseExtraContrastSuggestions
-                        ? ContrastHelpers.FindSimilarAAAColor(item.Foreground, item.Background)
-                        : ContrastHelpers.FindSimilarAAColor(item.Foreground, item.Background);
-                    if (suggestions.Length == 0)
+                    foreach (var item in ClassificationGridItems)
                     {
-                        item.HasContrastWarning = false;
-                        continue;
-                    }
+                        if (item.HasContrastWarning)
+                        {
+                            var suggestions = UseExtraContrastSuggestions
+                                ? ContrastHelpers.FindSimilarAAAColor(item.Foreground, item.Background)
+                                : ContrastHelpers.FindSimilarAAColor(item.Foreground, item.Background);
+                            if (suggestions.Length == 0)
+                            {
+                                item.HasContrastWarning = false;
+                                continue;
+                            }
 
-                    var topSuggestion = suggestions.OrderBy(suggestion => suggestion.Distance).First();
-                    item.Foreground = topSuggestion.Color;
-                }
-            }
+                            var topSuggestion = suggestions.OrderBy(suggestion => suggestion.Distance).First();
+                            item.Foreground = topSuggestion.Color;
+                        }
+                    }
+                });
         }
 
         #endregion
