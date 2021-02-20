@@ -9,6 +9,7 @@ using Carnation.Helpers;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Utilities;
 using Microsoft.Win32;
 using static Carnation.ClassificationProvider;
 
@@ -37,16 +38,20 @@ namespace Carnation
 
             EditForegroundCommand = new RelayCommand<ClassificationGridItem>(OnEditForeground);
             EditBackgroundCommand = new RelayCommand<ClassificationGridItem>(OnEditBackground);
-            UseItemDefaultsCommand = new RelayCommand<ClassificationGridItem>(OnUseItemDefaults);
             ToggleIsBoldCommand = new RelayCommand<ClassificationGridItem>(OnToggleIsBold);
-            UseSuggestedForegroundCommand = new RelayCommand<ClassificationGridItem>(OnUseSuggestedForeground);
-            ResetAllToDefaultCommand = new RelayCommand(OnResetAllToDefault);
+
+            ResetToDefaultsCommand = new RelayCommand<ClassificationGridItem>(OnResetToDefaults);
+            UseForegroundSuggestionCommand = new RelayCommand<ClassificationGridItem>(OnUseForegroundSuggestion);
+
+            ResetAllToDefaultsCommand = new RelayCommand(OnResetAllToDefaults);
+            UseAllForegroundSuggestionsCommand = new RelayCommand(OnUseAllForegroundSuggestions);
             ExportThemeCommand = new RelayCommand(OnExportTheme);
 
             foreach (var classificationItem in ClassificationProvider.GridItems)
             {
                 ClassificationGridItems.Add(classificationItem);
             }
+            UpdateContrastWarnings();
 
             ClassificationGridView.SortDescriptions.Clear();
             ClassificationGridView.SortDescriptions.Add(new SortDescription(nameof(ClassificationGridItem.Classification), ListSortDirection.Ascending));
@@ -138,10 +143,13 @@ namespace Carnation
 
         public ICommand EditForegroundCommand { get; }
         public ICommand EditBackgroundCommand { get; }
-        public ICommand UseItemDefaultsCommand { get; }
         public ICommand ToggleIsBoldCommand { get; }
-        public ICommand UseSuggestedForegroundCommand { get; }
-        public ICommand ResetAllToDefaultCommand { get; }
+
+        public ICommand ResetToDefaultsCommand { get; }
+        public ICommand UseForegroundSuggestionCommand { get; }
+
+        public ICommand ResetAllToDefaultsCommand { get; }
+        public ICommand UseAllForegroundSuggestionsCommand { get; }
         public ICommand ExportThemeCommand { get; }
 
         #endregion
@@ -157,6 +165,7 @@ namespace Carnation
             }
             
             ClassificationProvider.Refresh(definitionNames);
+            UpdateContrastWarnings(definitionNames);
         }
 
         public void OnSelectedSpanChanged(IWpfTextView view, Span? span)
@@ -179,6 +188,25 @@ namespace Carnation
         #endregion
 
         #region Private Methods
+
+        private void UpdateContrastWarnings(ILookup<string, string> definitionNames = null)
+        {
+            var minimumContrastRatio = UseExtraContrastSuggestions
+                ? ContrastHelpers.AAA_Contrast
+                : ContrastHelpers.AA_Contrast;
+
+            foreach (var item in ClassificationGridItems)
+            {
+                if (definitionNames?.Contains(item.DefinitionName) == false)
+                {
+                    continue;
+                }
+
+                item.HasContrastWarning = item.IsForegroundEditable
+                    && item.IsBackgroundEditable
+                    && item.ContrastRatio < minimumContrastRatio;
+            }
+        }
 
         private bool FilterClassification(ClassificationGridItem item)
         {
@@ -233,6 +261,7 @@ namespace Carnation
         {
             var settingsStore = await OptionsHelper.GetWritableSettingsStoreAsync();
             settingsStore.WriteBoolean(OptionsHelper.GeneralSettingsCollectionName, nameof(UseExtraContrastSuggestions), UseExtraContrastSuggestions);
+            UpdateContrastWarnings();
         }
 
         private void OnSearchTextChanged()
@@ -249,15 +278,14 @@ namespace Carnation
             }
         }
 
-        private void OnUseItemDefaults(ClassificationGridItem item)
+        private void OnResetToDefaults(ClassificationGridItem item)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
 
             FontsAndColorsHelper.ResetClassificationItem(item);
         }
 
-        private void OnUseSuggestedForeground(ClassificationGridItem item)
+        private void OnUseForegroundSuggestion(ClassificationGridItem item)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
@@ -311,9 +339,10 @@ namespace Carnation
             }
         }
 
-        private void OnResetAllToDefault()
+        private void OnResetAllToDefaults()
         {
             FontsAndColorsHelper.ResetAllClassificationItems();
+            UpdateContrastWarnings();
         }
 
         private void OnExportTheme()
@@ -322,6 +351,7 @@ namespace Carnation
             {
                 DefaultExt = "vssettings",
                 Title = "Export Theme",
+                Filter = "Settings Files (*.vssettings)|*.vssettings|All Files (*.*)|*.*",
                 AddExtension = true,
                 OverwritePrompt = true,
                 CheckPathExists = true
@@ -331,6 +361,36 @@ namespace Carnation
             {
                 ThemeExporter.Export(dialog.FileName, ClassificationGridItems);
             }
+        }
+
+        private void OnUseAllForegroundSuggestions()
+        {
+            var operationExecutor = VSServiceHelpers.GetMefExport<IUIThreadOperationExecutor>();
+            operationExecutor.Execute(
+                "Carnation",
+                "Applying all foreground color suggestions...",
+                allowCancellation: false,
+                showProgress: true,
+                (context) =>
+                {
+                    foreach (var item in ClassificationGridItems)
+                    {
+                        if (item.HasContrastWarning)
+                        {
+                            var suggestions = UseExtraContrastSuggestions
+                                ? ContrastHelpers.FindSimilarAAAColor(item.Foreground, item.Background)
+                                : ContrastHelpers.FindSimilarAAColor(item.Foreground, item.Background);
+                            if (suggestions.Length == 0)
+                            {
+                                item.HasContrastWarning = false;
+                                continue;
+                            }
+
+                            var topSuggestion = suggestions.OrderBy(suggestion => suggestion.Distance).First();
+                            item.Foreground = topSuggestion.Color;
+                        }
+                    }
+                });
         }
 
         #endregion

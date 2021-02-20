@@ -12,7 +12,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProjectGuid>{941956C6-D775-40A5-ABC1-FAD32CFB7874}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Carnation</RootNamespace>
     <AssemblyName>Carnation</AssemblyName>
@@ -63,6 +63,7 @@
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToTextWithoutAlpha.cs" />
     <Compile Include="Converters\ContrastRatioConverter.cs" />
+    <Compile Include="Converters\ContrastRatioToRatingConverter.cs" />
     <Compile Include="Converters\HueToColorConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
     <Compile Include="Converters\PercentConverter.cs" />

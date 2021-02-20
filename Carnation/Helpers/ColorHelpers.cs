@@ -8,6 +8,9 @@ namespace Carnation
 {
     internal static class ColorHelpers
     {
+        private static readonly ImmutableDictionary<byte, float> _scRgbLookup = Enumerable.Range(0, 256)
+            .ToImmutableDictionary(b => (byte)b, b => sRgbToScRgb((byte)b));
+
         // https://www.w3.org/TR/WCAG20/#contrast-ratiodef
         public static double GetContrast(this Color color, Color otherColor)
         {
@@ -39,9 +42,9 @@ namespace Carnation
 
         public static double GetLuminance(byte r, byte g, byte b)
         {
-            var scR = sRgbToScRgb(r);
-            var scG = sRgbToScRgb(g);
-            var scB = sRgbToScRgb(b);
+            var scR = _scRgbLookup[r];
+            var scG = _scRgbLookup[g];
+            var scB = _scRgbLookup[b];
 
             return GetLuminance(scR, scG, scB);
         }

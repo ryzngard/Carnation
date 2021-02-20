@@ -14,14 +14,14 @@ namespace Carnation
             Color targetColor,
             Color contrastColor)
         {
-            return FindSimilarColors(targetColor, contrastColor, AA_Contrast, 150.0);
+            return FindSimilarColors(targetColor, contrastColor, AA_Contrast, distanceLimit: 150.0);
         }
 
         public static ImmutableArray<ContrastResult> FindSimilarAAAColor(
             Color targetColor,
             Color contrastColor)
         {
-            return FindSimilarColors(targetColor, contrastColor, AAA_Contrast, 150.0);
+            return FindSimilarColors(targetColor, contrastColor, AAA_Contrast, distanceLimit: 150.0);
         }
 
         public static ImmutableArray<ContrastResult> FindSimilarColors(
