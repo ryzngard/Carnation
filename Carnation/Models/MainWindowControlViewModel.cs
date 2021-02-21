@@ -46,6 +46,7 @@ namespace Carnation
             ResetAllToDefaultsCommand = new RelayCommand(OnResetAllToDefaults);
             UseAllForegroundSuggestionsCommand = new RelayCommand(OnUseAllForegroundSuggestions);
             ExportThemeCommand = new RelayCommand(OnExportTheme);
+            ImportThemeCommand = new RelayCommand(OnImportTheme);
 
             foreach (var classificationItem in ClassificationProvider.GridItems)
             {
@@ -151,6 +152,7 @@ namespace Carnation
         public ICommand ResetAllToDefaultsCommand { get; }
         public ICommand UseAllForegroundSuggestionsCommand { get; }
         public ICommand ExportThemeCommand { get; }
+        public ICommand ImportThemeCommand { get; }
 
         #endregion
 
@@ -360,6 +362,34 @@ namespace Carnation
             if (dialog.ShowDialog() == true)
             {
                 ThemeExporter.Export(dialog.FileName, ClassificationGridItems);
+            }
+        }
+
+        private void OnImportTheme()
+        {
+            var dialog = new OpenFileDialog
+            {
+                DefaultExt = "vssettings",
+                Title = "Import Theme",
+                Filter = "Settings Files (*.vssettings)|*.vssettings|All Files (*.*)|*.*",
+                AddExtension = true,
+                CheckPathExists = true,
+                CheckFileExists = true,
+                Multiselect = false, 
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                var operationExecutor = VSServiceHelpers.GetMefExport<IUIThreadOperationExecutor>();
+                operationExecutor.Execute(
+                    "Carnation",
+                    "Loading theme colors...",
+                    allowCancellation: false,
+                    showProgress: true,
+                    (context) =>
+                    {
+                        ThemeImporter.Import(dialog.FileName, ClassificationGridItems);
+                    });
             }
         }
 

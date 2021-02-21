@@ -7,7 +7,7 @@ using static Carnation.ClassificationProvider;
 
 namespace Carnation
 {
-    internal class ThemeExporter
+    internal static class ThemeExporter
     {
         public static void Export(string fileName, IEnumerable<ClassificationGridItem> items)
         {
