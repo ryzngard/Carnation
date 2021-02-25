@@ -71,6 +71,7 @@
     <Compile Include="Helpers\ControlExtensions.cs" />
     <Compile Include="Helpers\OptionsHelper.cs" />
     <Compile Include="Helpers\SavedColorsManager.cs" />
+    <Compile Include="Helpers\ThemeImporter.cs" />
     <Compile Include="Helpers\TimeLimitedAction.cs" />
     <Compile Include="Helpers\ThemeExporter.cs" />
     <Compile Include="Helpers\UnsafeNativeMethods.cs" />
@@ -119,6 +120,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
