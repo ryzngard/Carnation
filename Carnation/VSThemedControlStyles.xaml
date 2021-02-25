@@ -5,6 +5,8 @@
                     xmlns:vsshell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.15.0"
                     xmlns:vsui="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0">
 
+    <Geometry x:Key="DownArrowGeometry">M 0 0 L 3 3 L 6 0 Z</Geometry>
+
     <Style TargetType="{x:Type ToggleButton}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Background" Value="{DynamicResource {x:Static vsui:CommonControlsColors.ButtonBrushKey}}"/>
@@ -104,14 +106,14 @@
                                          SeparatorVisibility="{TemplateBinding SeparatorVisibility}"
                                          SeparatorBrush="{TemplateBinding SeparatorBrush}">
                             <StackPanel Orientation="Horizontal">
-                                <ContentPresenter 
+                                <ContentPresenter
                                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                 RecognizesAccessKey="True" />
                                 <Path x:Name="SortArrow"
-                                                HorizontalAlignment="Right" 
-                                                VerticalAlignment="Center"                                           
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
                                                 Width="8"
                                                 Height="6"
                                                 Margin="2,0,5,0"
@@ -177,4 +179,117 @@
         <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandShelfBackgroundGradientBeginKey}}" />
     </Style>
 
+    <Style TargetType="ContextMenu">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarTextActiveKey}}"/>
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMenuBackgroundGradientKey}}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarBorderKey}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContextMenu">
+                    <Border Name="ContextMenuBorder" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                        <ScrollViewer Name="ContextMenuScrollViewer"
+                                          Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
+                                <Grid RenderOptions.ClearTypeHint="Enabled">
+                                    <Canvas Height="0" Width="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                        <Rectangle
+                                        Name="OpaqueRect"
+                                        Height="{Binding ElementName=Border,Path=ActualHeight}"
+                                        Width="{Binding ElementName=Border,Path=ActualWidth}"
+                                        Fill="{Binding ElementName=Border,Path=Background}" />
+                                    </Canvas>
+                                    <ItemsPresenter Name="ItemsPresenter" Margin="{TemplateBinding Padding}"
+                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </Grid>
+                            </ScrollViewer>
+                        </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger SourceName="ContextMenuScrollViewer"
+                                 Property="ScrollViewer.CanContentScroll"
+                                 Value="false" >
+                            <Setter TargetName="OpaqueRect"
+                                    Property="Canvas.Top"
+                                    Value="{Binding ElementName=ContextMenuScrollViewer, Path=VerticalOffset}" />
+                            <Setter TargetName="OpaqueRect"
+                                    Property="Canvas.Left"
+                                    Value="{Binding ElementName=ContextMenuScrollViewer, Path=HorizontalOffset}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Geometry x:Key="Checkmark">F1 M 5,11 L 3,7 L 5,7 L 6,9 L 9,3 L 11,3 L 7,11 L 5,11 Z</Geometry>
+
+    <!-- MenuItem Style -->
+    <Style TargetType="MenuItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static vsshell:VsBrushes.ToolWindowTextKey}}"></Setter>
+        <Setter Property="Background" Value="{DynamicResource {x:Static vsshell:VsBrushes.CommandBarMenuBackgroundGradientKey}}"></Setter>
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <Grid SnapsToDevicePixels="true" MinHeight="22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="26" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="54" />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Name="Background" Fill="Transparent" StrokeThickness="0" Grid.ColumnSpan="3" />
+                        <Border x:Name="GlyphPanel"
+                            Background="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarSelectedIconBrushKey}}"
+                            Margin="1"
+                            Visibility="Collapsed"
+                            Width="18"
+                            Height="18">
+                            <Path Name="Glyph" Margin="2" Width="16" Height="16" Fill="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarCheckBoxBrushKey}}" FlowDirection="LeftToRight" Data="{StaticResource Checkmark}"/>
+                        </Border>
+                        <ContentPresenter Grid.Column="1"
+                                Margin="8 1 0 1"
+                                ContentSource="Header"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="GlyphPanel" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Background" Property="Fill" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarMenuItemMouseOverBrushKey}}"/>
+                            <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarMenuItemMouseOverTextBrushKey}}"/>
+                            <Setter TargetName="GlyphPanel" Property="Background" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarHoverOverSelectedIconBrushKey}}" />
+                            <Setter TargetName="Glyph" Property="Fill" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarCheckBoxMouseOverBrushKey}}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarTextInactiveBrushKey}}"/>
+                            <Setter TargetName="GlyphPanel" Property="Background" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarSelectedIconDisabledBrushKey}}"/>
+                            <Setter TargetName="Glyph" Property="Fill" Value="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarCheckBoxDisabledBrushKey}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Separator">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid SnapsToDevicePixels="true" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="26" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Height="1" Margin="4,2,1,2" Fill="{DynamicResource {x:Static vsui:EnvironmentColors.CommandBarMenuSeparatorBrushKey}}" Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
