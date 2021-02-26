@@ -2,9 +2,11 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml.Linq;
 using Carnation.Helpers;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Text;
@@ -47,6 +49,7 @@ namespace Carnation
             UseAllForegroundSuggestionsCommand = new RelayCommand(OnUseAllForegroundSuggestions);
             ExportThemeCommand = new RelayCommand(OnExportTheme);
             ImportThemeCommand = new RelayCommand(OnImportTheme);
+            LoadThemeCommand = new RelayCommand<string>(OnLoadTheme);
 
             foreach (var classificationItem in ClassificationProvider.GridItems)
             {
@@ -153,6 +156,7 @@ namespace Carnation
         public ICommand UseAllForegroundSuggestionsCommand { get; }
         public ICommand ExportThemeCommand { get; }
         public ICommand ImportThemeCommand { get; }
+        public ICommand LoadThemeCommand { get; }
 
         #endregion
 
@@ -391,6 +395,22 @@ namespace Carnation
                         ThemeImporter.Import(dialog.FileName, ClassificationGridItems);
                     });
             }
+        }
+
+        private void OnLoadTheme(string themeName)
+        {
+            var operationExecutor = VSServiceHelpers.GetMefExport<IUIThreadOperationExecutor>();
+            operationExecutor.Execute(
+                "Carnation",
+                "Loading theme colors...",
+                allowCancellation: false,
+                showProgress: true,
+                (context) =>
+                {
+                    using var themeStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"Carnation.Resources.Themes.{themeName}.vssettings");
+                    var themeSettings = XDocument.Load(themeStream);
+                    ThemeImporter.Import(themeSettings, ClassificationGridItems);
+                });
         }
 
         private void OnUseAllForegroundSuggestions()

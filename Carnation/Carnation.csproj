@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
@@ -123,7 +123,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup>
+    <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.SDK">
       <Version>17.0.0-previews-1-31410-273</Version>
     </PackageReference>
@@ -160,6 +160,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Themes\monokai.vssettings" />
+    <EmbeddedResource Include="Resources\Themes\monokai-pro.vssettings" />
+    <EmbeddedResource Include="Resources\Themes\solarized-dark.vssettings" />
+    <EmbeddedResource Include="Resources\Themes\solarized-light.vssettings" />
+    <EmbeddedResource Include="Resources\Themes\tomorrow-light.vssettings" />
+    <EmbeddedResource Include="Resources\Themes\tomorrow-night-blue.vssettings" />
+    <EmbeddedResource Include="Resources\Themes\wekeroad-ink.vssettings" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Resources\EditColors.png" />
     <Content Include="Resources\EditorColors.bmp" />
     <Content Include="Resources\EditorColors.ico">
@@ -171,10 +180,9 @@
       <LastGenOutput>CarnationPackage1.cs</LastGenOutput>
     </VSCTCompile>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

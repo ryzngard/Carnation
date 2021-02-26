@@ -64,6 +64,14 @@
                                 <MenuItem Header="Import" Command="{Binding ImportThemeCommand}" />
                                 <MenuItem Header="Export" Command="{Binding ExportThemeCommand}" />
                                 <MenuItem Header="Reset Theme To Defaults" Command="{Binding ResetAllToDefaultsCommand}" />
+                                <Separator />
+                                <MenuItem Header="Monokai" Command="{Binding LoadThemeCommand}" CommandParameter="monokai"/>
+                                <MenuItem Header="Monokai Pro" Command="{Binding LoadThemeCommand}" CommandParameter="monokai-pro"/>
+                                <MenuItem Header="Solarized Light" Command="{Binding LoadThemeCommand}" CommandParameter="solarized-light"/>
+                                <MenuItem Header="Solarized Dark" Command="{Binding LoadThemeCommand}" CommandParameter="solarized-dark"/>
+                                <MenuItem Header="Tomorrow Light" Command="{Binding LoadThemeCommand}" CommandParameter="tomorrow-light"/>
+                                <MenuItem Header="Tomorrow Night Blue" Command="{Binding LoadThemeCommand}" CommandParameter="tomorrow-night-blue"/>
+                                <MenuItem Header="WekeRoad Ink" Command="{Binding LoadThemeCommand}" CommandParameter="wekeroad-ink"/>
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
