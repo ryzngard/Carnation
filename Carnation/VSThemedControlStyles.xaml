@@ -232,7 +232,7 @@
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type MenuItem}">
+                <ControlTemplate TargetType="MenuItem">
                     <Grid SnapsToDevicePixels="true" MinHeight="22">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="26" />
@@ -276,7 +276,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Separator">
+    <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
         <Setter Property="Focusable" Value="False"/>
         <Setter Property="Template">
             <Setter.Value>

@@ -49,7 +49,7 @@
 
             <DockPanel Grid.Column="0">
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" HorizontalAlignment="Left" Margin="4 4 0 4">
-                    <Button Click="DropDownButton_Click" ContextMenuOpening="Button_ContextMenuOpening">
+                    <Button Click="DropDownButton_Click" ContextMenuOpening="DropDownButton_ContextMenuOpening">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Themes" />
@@ -67,7 +67,7 @@
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
-                    <Button Margin="4 0 0 0" Click="DropDownButton_Click" ContextMenuOpening="Button_ContextMenuOpening">
+                    <Button Margin="4 0 0 0" Click="DropDownButton_Click" ContextMenuOpening="DropDownButton_ContextMenuOpening">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Suggestions" />
