@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Media;
+using Microsoft.VisualStudio.Shell;
 using static Carnation.ClassificationProvider;
 
 namespace Carnation
@@ -11,7 +12,8 @@ namespace Carnation
     {
         public static void Export(string fileName, IEnumerable<ClassificationGridItem> items)
         {
-            var (fontFamily, fontSize) = FontsAndColorsHelper.GetEditorFontInfo(scaleFontSize: false);
+            ThreadHelper.ThrowIfNotOnUIThread();
+
             var (defaultForeground, defaultBackground) = FontsAndColorsHelper.GetPlainTextColors();
 
             var categories = items.GroupBy(item => item.Category);
@@ -33,7 +35,7 @@ $@"<UserSettings>
             foreach (var categoryItems in categories)
             {
                 vssettings.AppendLine(
-$@"          <Category GUID=""{categoryItems.Key.ToString("B")}"" FontName=""{fontFamily.Source}"" FontSize=""{fontSize}"" CharSet=""1"" FontIsDefault=""No"">
+$@"          <Category GUID=""{categoryItems.Key.ToString("B")}"" FontIsDefault=""Yes"">
             <Items>");
 
                 foreach (var item in categoryItems)

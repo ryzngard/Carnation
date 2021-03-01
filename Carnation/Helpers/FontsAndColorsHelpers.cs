@@ -12,7 +12,7 @@ namespace Carnation
 {
     internal static class FontsAndColorsHelper
     {
-        private static readonly Guid TextEditorCategory = new Guid("A27B4E24-A735-4d1d-B8E7-9716E1E3D8E0");
+        private static readonly Guid TextEditorCategory = new Guid("A27B4E24-A735-4D1D-B8E7-9716E1E3D8E0");
         private static readonly Guid TextEditorMEFItemsCategory = new Guid("75A05685-00A8-4DED-BAE5-E7A50BFA929A");
         private static readonly Guid TextEditorLanguageServiceCategory = new Guid("E0187991-B458-4F7E-8CA9-42C9A573B56C");
         private static readonly Guid TextEditorManagerCategory = new Guid("58E96763-1D3B-4E05-B6BA-FF7115FD0B7B");
