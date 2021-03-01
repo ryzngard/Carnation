@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Data;
@@ -50,6 +51,7 @@ namespace Carnation
             ExportThemeCommand = new RelayCommand(OnExportTheme);
             ImportThemeCommand = new RelayCommand(OnImportTheme);
             LoadThemeCommand = new RelayCommand<string>(OnLoadTheme);
+            FindMoreThemesCommand = new RelayCommand(OnFindMoreThemes);
 
             foreach (var classificationItem in ClassificationProvider.GridItems)
             {
@@ -157,6 +159,7 @@ namespace Carnation
         public ICommand ExportThemeCommand { get; }
         public ICommand ImportThemeCommand { get; }
         public ICommand LoadThemeCommand { get; }
+        public ICommand FindMoreThemesCommand { get; }
 
         #endregion
 
@@ -411,6 +414,11 @@ namespace Carnation
                     var themeSettings = XDocument.Load(themeStream);
                     ThemeImporter.Import(themeSettings, ClassificationGridItems);
                 });
+        }
+
+        private void OnFindMoreThemes()
+        {
+            Process.Start("https://studiostyl.es");
         }
 
         private void OnUseAllForegroundSuggestions()

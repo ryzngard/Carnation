@@ -72,6 +72,8 @@
                                 <MenuItem Header="Tomorrow Light" Command="{Binding LoadThemeCommand}" CommandParameter="tomorrow-light"/>
                                 <MenuItem Header="Tomorrow Night Blue" Command="{Binding LoadThemeCommand}" CommandParameter="tomorrow-night-blue"/>
                                 <MenuItem Header="WekeRoad Ink" Command="{Binding LoadThemeCommand}" CommandParameter="wekeroad-ink"/>
+                                <Separator />
+                                <MenuItem Header="Find More Themes on StudioStyl.es..." Command="{Binding FindMoreThemesCommand}" />
                             </ContextMenu>
                         </Button.ContextMenu>
                     </Button>
