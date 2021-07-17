@@ -81,9 +81,7 @@ namespace Carnation.Helpers
                     if (classificationsByName.TryGetValue(name, out var classificationItem))
                     {
                         ImportItem(item, classificationItem);
-                        break;
                     }
-
                 }
             }
         }

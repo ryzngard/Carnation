@@ -8,7 +8,7 @@
       <PropertyValue name="Version">2</PropertyValue>
       <FontsAndColors Version="2.0">
         <Categories>
-          <Category GUID="{75a05685-00a8-4ded-bae5-e7a50bfa929a}" FontIsDefault="Yes">
+          <Category GUID="{a27b4e24-a735-4d1d-b8e7-9716e1e3d8e0}" FontIsDefault="Yes">
             <Items>
               <Item Name="RazorCode" Foreground="0x00FFFFFF" Background="0x00E5E5E5" BoldFont="No"/>
               <Item Name="RazorTagHelperAttribute" Foreground="0x00808000" Background="0x01000001" BoldFont="No"/>
@@ -197,7 +197,7 @@
               <Item Name="punctuation" Foreground="0x00DCDCDC" Background="0x01000001" BoldFont="No"/>
               <Item Name="string - verbatim" Foreground="0x001515A3" Background="0x01000001" BoldFont="No"/>
               <Item Name="string - escape character" Foreground="0x008FD6FF" Background="0x01000001" BoldFont="No"/>
-              <Item Name="keyword - control" Foreground="0x00FFFFFF" Background="0x01000001" BoldFont="No"/>
+              <Item Name="keyword - control" Foreground="0x003278CC" Background="0x01000001" BoldFont="No"/>
               <Item Name="operator - overloaded" Foreground="0x00FFFFFF" Background="0x01000001" BoldFont="No"/>
               <Item Name="static symbol" BoldFont="No"/>
               <Item Name="class name" Foreground="0x006DC6FF" Background="0x01000001" BoldFont="No"/>
@@ -262,14 +262,14 @@
               <Item Name="Identifier" Foreground="0x00FFFFFF" Background="0x01000001" BoldFont="No"/>
               <Item Name="Keyword" Foreground="0x003278CC" Background="0x01000001" BoldFont="No"/>
               <Item Name="Preprocessor Keyword" Foreground="0x003248DA" Background="0x01000001" BoldFont="No"/>
-              <Item Name="Operator" Foreground="0x00000000" Background="0x01000001" BoldFont="No"/>
+              <Item Name="Operator" Foreground="0x00FFFFFF" Background="0x01000001" BoldFont="No"/>
               <Item Name="Literal" Foreground="0x00DADADA" Background="0x01000001" BoldFont="No"/>
               <Item Name="Markup Attribute" Foreground="0x00F4CA92" Background="0x01000001" BoldFont="No"/>
               <Item Name="Markup Attribute Value" Foreground="0x00C8C8C8" Background="0x01000001" BoldFont="No"/>
               <Item Name="Markup Node" Foreground="0x00D69C56" Background="0x01000001" BoldFont="No"/>
               <Item Name="String" Foreground="0x005CC2A5" Background="0x01000001" BoldFont="No"/>
               <Item Name="Type" Foreground="0x00B0C94E" Background="0x01000001" BoldFont="No"/>
-              <Item Name="Number" Foreground="0x00000000" Background="0x01000001" BoldFont="No"/>
+              <Item Name="Number" Foreground="0x00FFFFFF" Background="0x01000001" BoldFont="No"/>
               <Item Name="SymbolDefinitionClassificationFormat" Foreground="0x00FA955F" Background="0x01000001" BoldFont="No"/>
               <Item Name="SymbolReferenceClassificationFormat" Foreground="0x00A0A57C" Background="0x01000001" BoldFont="No"/>
               <Item Name="Block Structure Adornments" Background="0x00717171"/>

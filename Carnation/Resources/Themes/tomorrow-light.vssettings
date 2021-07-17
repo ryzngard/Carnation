@@ -8,7 +8,7 @@
       <PropertyValue name="Version">2</PropertyValue>
       <FontsAndColors Version="2.0">
         <Categories>
-          <Category GUID="{75a05685-00a8-4ded-bae5-e7a50bfa929a}" FontName="Consolas" FontSize="13" CharSet="1" FontIsDefault="No">
+          <Category GUID="{a27b4e24-a735-4d1d-b8e7-9716e1e3d8e0}" FontIsDefault="Yes">
             <Items>
               <Item Name="RazorCode" Foreground="0x00505050" Background="0x00E5E5E5" BoldFont="No"/>
               <Item Name="RazorTagHelperAttribute" Foreground="0x00800080" Background="0x01000001" BoldFont="No"/>
@@ -197,8 +197,8 @@
               <Item Name="punctuation" Foreground="0x00000000" Background="0x01000001" BoldFont="No"/>
               <Item Name="string - verbatim" Foreground="0x0000B7EA" Background="0x01000001" BoldFont="No"/>
               <Item Name="string - escape character" Foreground="0x00FB76B7" Background="0x01000001" BoldFont="No"/>
-              <Item Name="keyword - control" Foreground="0x00505050" Background="0x01000001" BoldFont="No"/>
-              <Item Name="operator - overloaded" Foreground="0x00505050" Background="0x01000001" BoldFont="No"/>
+              <Item Name="keyword - control" Foreground="0x00008C71" Background="0x01000001" BoldFont="No"/>
+              <Item Name="operator - overloaded" Foreground="0x00000000" Background="0x01000001" BoldFont="No"/>
               <Item Name="static symbol" BoldFont="No"/>
               <Item Name="class name" Foreground="0x00AE7142" Background="0x01000001" BoldFont="No"/>
               <Item Name="delegate name" Foreground="0x00AE7142" Background="0x01000001" BoldFont="No"/>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Windows.Media;
 using Carnation.Helpers;
@@ -13,8 +14,8 @@ namespace Carnation
     internal static class FontsAndColorsHelper
     {
         private static readonly Guid TextEditorCategory = new Guid("A27B4E24-A735-4D1D-B8E7-9716E1E3D8E0");
-        private static readonly Guid TextEditorMEFItemsCategory = new Guid("75A05685-00A8-4DED-BAE5-E7A50BFA929A");
         private static readonly Guid TextEditorLanguageServiceCategory = new Guid("E0187991-B458-4F7E-8CA9-42C9A573B56C");
+        private static readonly Guid TextEditorMEFItemsCategory = new Guid("75A05685-00A8-4DED-BAE5-E7A50BFA929A");
         private static readonly Guid TextEditorManagerCategory = new Guid("58E96763-1D3B-4E05-B6BA-FF7115FD0B7B");
         private static readonly Guid TextEditorMarkerCategory = new Guid("FF349800-EA43-46C1-8C98-878E78F46501");
 
@@ -27,13 +28,15 @@ namespace Carnation
 
         private const uint InvalidColorRef = 0xff000000;
 
+        private static bool IsUpdating = false;
+
         private static readonly Guid[] s_categories = new[]
         {
             TextEditorManagerCategory,
+            TextEditorLanguageServiceCategory,
             TextEditorMEFItemsCategory,
             // TextEditorMarkerCategory,
             // TextEditorCategory,
-            // TextEditorLanguageServiceCategory
         };
 
         public static ImmutableDictionary<Guid, ImmutableArray<AllColorableItemInfo>> GetTextEditorInfos()
@@ -42,9 +45,11 @@ namespace Carnation
 
             EnsureInitialized();
 
-            return s_categories.ToImmutableDictionary(catagory => catagory, catagory => GetCategoryItems(catagory));
+            var loadedItemNames = new HashSet<string>();
 
-            static ImmutableArray<AllColorableItemInfo> GetCategoryItems(Guid category)
+            return s_categories.ToImmutableDictionary(catagory => catagory, catagory => GetCategoryItems(catagory, loadedItemNames));
+
+            static ImmutableArray<AllColorableItemInfo> GetCategoryItems(Guid category, HashSet<string> loadedItemNames)
             {
                 if (s_fontsAndColorDefaultsProvider.GetObject(category, out var obj) != VSConstants.S_OK)
                 {
@@ -62,9 +67,12 @@ namespace Carnation
                 var items = new AllColorableItemInfo[1];
                 for (var index = 0; index < count; index++)
                 {
-                    if (fontAndColorDefaults.GetItem(index, items) == VSConstants.S_OK)
+
+                    if (fontAndColorDefaults.GetItem(index, items) == VSConstants.S_OK
+                        && !loadedItemNames.Contains(items[0].bstrName))
                     {
                         builder.Add(items[0]);
+                        loadedItemNames.Add(items[0].bstrName);
                     }
                 }
 
@@ -297,38 +305,54 @@ namespace Carnation
 
             EnsureInitialized();
 
-            // Make sure LOADDEFAULTS is passed so any default values can be modified as well.
-            if (s_fontsAndColorStorage.OpenCategory(item.Category, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
+            IsUpdating = true;
+
+            // Some classifications exist in the LanguageService and MEFItems category. This ensures they are kept in sync.
+            if (item.Category != TextEditorMEFItemsCategory)
             {
-                // We were unable to access color information.
-                return;
+                TryUpdateItem(TextEditorMEFItemsCategory, item);
             }
 
-            try
+            TryUpdateItem(item.Category, item);
+
+            IsUpdating = false;
+
+            static void TryUpdateItem(Guid category, ClassificationGridItem item)
             {
-                var colorItems = new ColorableItemInfo[1];
-                if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
+
+                // Make sure LOADDEFAULTS is passed so any default values can be modified as well.
+                if (s_fontsAndColorStorage.OpenCategory(category, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES | __FCSTORAGEFLAGS.FCSF_LOADDEFAULTS)) != VSConstants.S_OK)
                 {
+                    // We were unable to access color information.
                     return;
                 }
 
-                var colorItem = colorItems[0];
-
-                colorItem.crForeground = item.ForegroundColorRef;
-                colorItem.crBackground = item.BackgroundColorRef;
-
-                colorItem.dwFontFlags = item.IsBold
-                    ? (uint)FONTFLAGS.FF_BOLD
-                    : (uint)FONTFLAGS.FF_DEFAULT;
-
-                if (s_fontsAndColorStorage.SetItem(item.DefinitionName, new[] { colorItem }) != VSConstants.S_OK)
+                try
                 {
-                    throw new Exception();
+                    var colorItems = new ColorableItemInfo[1];
+                    if (s_fontsAndColorStorage.GetItem(item.DefinitionName, colorItems) != VSConstants.S_OK)
+                    {
+                        return;
+                    }
+
+                    var colorItem = colorItems[0];
+
+                    colorItem.crForeground = item.ForegroundColorRef;
+                    colorItem.crBackground = item.BackgroundColorRef;
+
+                    colorItem.dwFontFlags = item.IsBold
+                        ? (uint)FONTFLAGS.FF_BOLD
+                        : (uint)FONTFLAGS.FF_DEFAULT;
+
+                    if (s_fontsAndColorStorage.SetItem(item.DefinitionName, new[] { colorItem }) != VSConstants.S_OK)
+                    {
+                        throw new Exception();
+                    }
                 }
-            }
-            finally
-            {
-                s_fontsAndColorStorage.CloseCategory();
+                finally
+                {
+                    s_fontsAndColorStorage.CloseCategory();
+                }
             }
         }
 
@@ -346,6 +370,11 @@ namespace Carnation
 
         internal static void RefreshClassificationItem(ClassificationGridItem item, AllColorableItemInfo allColorableItemInfo)
         {
+            if (IsUpdating)
+            {
+                return;
+            }
+
             ThreadHelper.ThrowIfNotOnUIThread();
 
             EnsureInitialized();
