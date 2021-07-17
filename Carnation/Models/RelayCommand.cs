@@ -18,12 +18,7 @@ namespace Carnation
 
         public bool CanExecute(object parameter)
         {
-            if (_canExecute is null)
-            {
-                return true;
-            }
-
-            return _canExecute.Invoke();
+            return _canExecute is null || _canExecute.Invoke();
         }
 
         public void Execute(object parameter)
@@ -47,12 +42,7 @@ namespace Carnation
 
         public bool CanExecute(object parameter)
         {
-            if (_canExecute is null)
-            {
-                return true;
-            }
-
-            return _canExecute.Invoke((T)parameter);
+            return _canExecute is null || _canExecute.Invoke((T)parameter);
         }
 
         public void Execute(object parameter)

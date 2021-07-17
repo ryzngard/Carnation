@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -76,6 +75,7 @@ namespace Carnation
                     {
                         _viewModel.ForegroundColor.PropertyChanged += OnViewModelForegroundColorChanged;
                     }
+
                     break;
 
                 case nameof(ColorPickerViewModel.BackgroundColor):
@@ -83,6 +83,7 @@ namespace Carnation
                     {
                         _viewModel.BackgroundColor.PropertyChanged += OnViewModelBackgroundColorChanged;
                     }
+
                     break;
 
                 case nameof(ColorPickerViewModel.CurrentEditorColor):
@@ -170,14 +171,7 @@ namespace Carnation
             var colorPicker = (ColorPicker)o;
             var vm = (ColorPickerViewModel)colorPicker.DataContext;
 
-            if ((bool)e.NewValue)
-            {
-                vm.CurrentEditorColor = vm.BackgroundColor;
-            }
-            else
-            {
-                vm.CurrentEditorColor = vm.ForegroundColor;
-            }
+            vm.CurrentEditorColor = (bool)e.NewValue ? vm.BackgroundColor : vm.ForegroundColor;
         }
 
         private static void OnUseExtraContrastSuggestionsChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)

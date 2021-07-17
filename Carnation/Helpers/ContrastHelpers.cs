@@ -43,7 +43,7 @@ namespace Carnation
 
             double distance;
             var results = new List<ContrastResult>();
-            
+
             for (var r = targetColor.R; r != stopValue; r = (byte)(r + interval))
             {
                 distance = ColorHelpers.GetDistance(r, targetColor.G, targetColor.B, targetColor);
@@ -79,7 +79,6 @@ namespace Carnation
 
             return results.OrderBy(result => result.Distance).Take(16).ToImmutableArray();
         }
-
 
         public class ContrastResult
         {

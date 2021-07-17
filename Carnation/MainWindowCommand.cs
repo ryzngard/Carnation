@@ -19,12 +19,12 @@ namespace Carnation
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("d88a2591-5c0e-48eb-90ed-28cefb214df2");
+        public static readonly Guid CommandSet = new("d88a2591-5c0e-48eb-90ed-28cefb214df2");
 
         /// <summary>
         /// VS Package that provides this command, not null.
         /// </summary>
-        private readonly AsyncPackage package;
+        private readonly AsyncPackage _package;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowCommand"/> class.
@@ -34,7 +34,7 @@ namespace Carnation
         /// <param name="commandService">Command service to add command to, not null.</param>
         private MainWindowCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
             var menuCommandID = new CommandID(CommandSet, CommandId);
@@ -54,7 +54,7 @@ namespace Carnation
         /// <summary>
         /// Gets the service provider from the owner package.
         /// </summary>
-        public Microsoft.VisualStudio.Shell.IAsyncServiceProvider ServiceProvider => package;
+        public IAsyncServiceProvider ServiceProvider => _package;
 
         /// <summary>
         /// Initializes the singleton instance of the command.
@@ -81,7 +81,7 @@ namespace Carnation
             // Get the instance number 0 of this tool window. This window is single instance so this instance
             // is actually the only one.
             // The last flag is set to true so that if the tool window does not exists it will be created.
-            var window = package.FindToolWindow(typeof(MainWindow), 0, true);
+            var window = _package.FindToolWindow(typeof(MainWindow), 0, true);
             if ((null == window) || (null == window.Frame))
             {
                 throw new NotSupportedException("Cannot create tool window");

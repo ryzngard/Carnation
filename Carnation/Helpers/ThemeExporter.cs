@@ -33,7 +33,7 @@ $@"<UserSettings>
             foreach (var categoryItems in categories)
             {
                 vssettings.AppendLine(
-$@"          <Category GUID=""{categoryItems.Key.ToString("B")}"" FontName=""{fontFamily.Source}"" FontSize=""{fontSize}"" CharSet=""1"" FontIsDefault=""No"">
+$@"          <Category GUID=""{categoryItems.Key:B}"" FontName=""{fontFamily.Source}"" FontSize=""{fontSize}"" CharSet=""1"" FontIsDefault=""No"">
             <Items>");
 
                 foreach (var item in categoryItems)
@@ -62,7 +62,6 @@ $@"          <Category GUID=""{categoryItems.Key.ToString("B")}"" FontName=""{fo
 
                     vssettings.AppendLine("/>");
                 }
-
 
                 vssettings.AppendLine(
 $@"            </Items>

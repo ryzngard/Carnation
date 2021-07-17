@@ -60,7 +60,7 @@ namespace Carnation
                 PropertyChanged += (s, o) =>
                 {
                     if (IsUpdating)
-                    { 
+                    {
                         return;
                     }
 

@@ -50,7 +50,7 @@ namespace Carnation.Models
                     // Trim ARGB to RGB
                     str = str.Substring(2);
                 }
-                
+
                 if (!SetProperty(ref _hex, str))
                 {
                     return;

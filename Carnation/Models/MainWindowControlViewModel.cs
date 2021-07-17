@@ -52,6 +52,7 @@ namespace Carnation
             {
                 ClassificationGridItems.Add(classificationItem);
             }
+
             UpdateContrastWarnings();
 
             ClassificationGridView.SortDescriptions.Clear();
@@ -165,7 +166,7 @@ namespace Carnation
             {
                 (FontFamily, FontSize) = FontsAndColorsHelper.GetEditorFontInfo();
             }
-            
+
             ClassificationProvider.Refresh(definitionNames);
             UpdateContrastWarnings(definitionNames);
         }
@@ -375,7 +376,7 @@ namespace Carnation
                 AddExtension = true,
                 CheckPathExists = true,
                 CheckFileExists = true,
-                Multiselect = false, 
+                Multiselect = false,
             };
 
             if (dialog.ShowDialog() == true)

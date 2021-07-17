@@ -13,7 +13,7 @@ namespace Carnation
 {
     internal static class ClassificationHelpers
     {
-        private static readonly HashSet<string> s_ignoredClassifications = new HashSet<string> { "(TRANSIENT)", "formal language" };
+        private static readonly HashSet<string> s_ignoredClassifications = new() { "(TRANSIENT)", "formal language" };
 
         public static ImmutableDictionary<string, string> GetClassificationNameMap()
         {
