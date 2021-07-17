@@ -82,7 +82,7 @@ namespace Carnation
 
         public event EventHandler<ColorPalleteSelectedArgs> ColorSelected;
 
-        private readonly Grid _grid = new Grid();
+        private readonly Grid _grid = new();
 
         public ColorPalette()
         {
@@ -100,17 +100,21 @@ namespace Carnation
 
             for (var row = 0; row < rows; row++)
             {
-                var rowDefinition = new RowDefinition();
-                rowDefinition.Height = GridLength.Auto;
+                var rowDefinition = new RowDefinition
+                {
+                    Height = GridLength.Auto
+                };
                 _grid.RowDefinitions.Add(rowDefinition);
 
                 for (var column = 0; column < columns; column++)
                 {
-                    var columnDefinition = new ColumnDefinition();
-                    columnDefinition.Width = GridLength.Auto;
+                    var columnDefinition = new ColumnDefinition
+                    {
+                        Width = GridLength.Auto
+                    };
                     _grid.ColumnDefinitions.Add(columnDefinition);
 
-                    var index = (row * (int)columns) + column;
+                    var index = (row * columns) + column;
                     var color = index >= Colors.Length
                         ? SWM.Colors.White
                         : Colors[index];
@@ -145,8 +149,10 @@ namespace Carnation
 
         private UIElement GenerateItem(int row, int column, Color color, int index)
         {
-            var rectangle = new Rectangle();
-            rectangle.Fill = new SolidColorBrush(color);
+            var rectangle = new Rectangle
+            {
+                Fill = new SolidColorBrush(color)
+            };
 
             if (Size.GridUnitType == GridUnitType.Pixel)
             {
@@ -159,25 +165,31 @@ namespace Carnation
                 rectangle.Width = 16;
             }
 
-            var border = new Border();
-            border.Margin = ColorPadding;
-            border.BorderThickness = new Thickness(1);
-            border.BorderBrush = new SolidColorBrush(SWM.Colors.Black);
-            border.Width = rectangle.Width;
-            border.Height = rectangle.Height;
+            var border = new Border
+            {
+                Margin = ColorPadding,
+                BorderThickness = new Thickness(1),
+                BorderBrush = new SolidColorBrush(SWM.Colors.Black),
+                Width = rectangle.Width,
+                Height = rectangle.Height,
 
-            border.Child = rectangle;
+                Child = rectangle
+            };
 
-            var focusBorder = new FocusableBorder();
-            focusBorder.Child = border;
-            focusBorder.Focusable = true;
-            focusBorder.Padding = new Thickness(1);
+            var focusBorder = new FocusableBorder
+            {
+                Child = border,
+                Focusable = true,
+                Padding = new Thickness(1)
+            };
 
             var dashBorderBrush = new VisualBrush();
-            var dashVisual = new Rectangle();
-            dashVisual.StrokeDashArray = new DoubleCollection(new double[] { 4, 2 });
-            dashVisual.Stroke = new SolidColorBrush(SWM.Colors.Gray);
-            dashVisual.StrokeThickness = 1;
+            var dashVisual = new Rectangle
+            {
+                StrokeDashArray = new DoubleCollection(new double[] { 4, 2 }),
+                Stroke = new SolidColorBrush(SWM.Colors.Gray),
+                StrokeThickness = 1
+            };
 
             dashBorderBrush.Visual = dashVisual;
 
@@ -185,7 +197,7 @@ namespace Carnation
             focusBorder.LostFocus += (s, a) => focusBorder.BorderBrush = new SolidColorBrush(SWM.Colors.Transparent);
 
             focusBorder.BorderBrush = new SolidColorBrush(SWM.Colors.Transparent);
-            
+
             AutomationProperties.SetHelpText(focusBorder, GetColorHelpText(color));
 
             focusBorder.MouseDown += (s, a) => ColorSelected?.Invoke(this, new ColorPalleteSelectedArgs(color, index));
@@ -249,7 +261,7 @@ namespace Carnation
             {
                 var (rows, columns) = GetActualRowsAndColumns();
                 var maxLength = rows * columns;
-                
+
                 if (value.Length <= maxLength)
                 {
                     var newArray = new Color[maxLength];

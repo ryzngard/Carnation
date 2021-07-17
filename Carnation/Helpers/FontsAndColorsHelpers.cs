@@ -142,8 +142,7 @@ namespace Carnation
                 var fontFamily = fontInfo[0].bFaceNameValid == 1
                     ? new FontFamily(fontInfo[0].bstrFaceName)
                     : DefaultFontInfo.FontFamily;
-
-                var fontSize = fontInfo[0].bPointSizeValid == 1
+                _ = fontInfo[0].bPointSizeValid == 1
                     ? scaleFontSize
                         ? Math.Abs(logFont[0].lfHeight) * GetDipsPerPixel()
                         : fontInfo[0].wPointSize
@@ -180,7 +179,7 @@ namespace Carnation
             {
                 s_fontsAndColorStorage = ServiceProvider.GlobalProvider.GetService<SVsFontAndColorStorage, IVsFontAndColorStorage>();
                 s_vsUIShell2 = ServiceProvider.GlobalProvider.GetService<SVsUIShell, IVsUIShell2>();
-                s_fontsAndColorDefaultsProvider = (IVsFontAndColorDefaultsProvider)ServiceProvider.GlobalProvider.GetService(Guid.Parse("DAF27B38-80B3-4C58-8133-AFD41C36C79A"));
+                s_fontsAndColorDefaultsProvider = (IVsFontAndColorDefaultsProvider)ServiceProvider.GlobalProvider.GetService(Guid.Parse("DAF27B38-80B3-4C58-8133-AFD41C36C79A")) ?? throw new Exception("Could not retrieve IVsFontAndColorDefaultsProvider.");
             }
         }
 
@@ -249,7 +248,7 @@ namespace Carnation
             }
             else if (colorType == (int)__VSCOLORTYPE.CT_AUTOMATIC)
             {
-                return null; 
+                return null;
             }
             else if (colorType == (int)__VSCOLORTYPE.CT_RAW)
             {
@@ -261,8 +260,8 @@ namespace Carnation
                 if (fontAndColorUtilities.GetEncodedIndex(colorRef, encodedIndex) == VSConstants.S_OK &&
                     fontAndColorUtilities.GetRGBOfIndex(encodedIndex[0], out var decoded) == VSConstants.S_OK)
                 {
-                    if (encodedIndex[0] == COLORINDEX.CI_SYSTEXT_BK ||
-                        encodedIndex[0] == COLORINDEX.CI_SYSTEXT_FG)
+                    if (encodedIndex[0] is COLORINDEX.CI_SYSTEXT_BK or
+                        COLORINDEX.CI_SYSTEXT_FG)
                     {
                         return null;
                     }
@@ -289,10 +288,10 @@ namespace Carnation
             }
 
             return win32Color.HasValue
-                ? (Color?)FromWin32Color((int)win32Color.Value)
+                ? FromWin32Color((int)win32Color.Value)
                 : null;
 
-            Color FromWin32Color(int color)
+            static Color FromWin32Color(int color)
             {
                 var drawingColor = System.Drawing.ColorTranslator.FromWin32(color);
                 return Color.FromRgb(drawingColor.R, drawingColor.G, drawingColor.B);
@@ -362,9 +361,9 @@ namespace Carnation
                 ? InvalidColorRef
                 : ToWin32Color(color);
 
-            uint ToWin32Color(Color color)
+            static uint ToWin32Color(Color color)
             {
-                return (uint)(color.R | color.G << 8 | color.B << 16);
+                return (uint)(color.R | (color.G << 8) | (color.B << 16));
             }
         }
 
@@ -462,7 +461,7 @@ namespace Carnation
 
             static void ResetCategoryItems(Guid category)
             {
-                if (s_fontsAndColorStorage.OpenCategory(category, (uint)(__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES)) != VSConstants.S_OK)
+                if (s_fontsAndColorStorage.OpenCategory(category, (uint)__FCSTORAGEFLAGS.FCSF_PROPAGATECHANGES) != VSConstants.S_OK)
                 {
                     return;
                 }

@@ -69,7 +69,7 @@ namespace Carnation
 
         private static float sRgbToScRgb(byte bval)
         {
-            var val = ((float)bval / 255.0f);
+            var val = bval / 255.0f;
 
             if (!(val > 0.0))       // Handles NaN case too. (Though, NaN isn't actually
                                     // possible in this case.)
@@ -93,26 +93,26 @@ namespace Carnation
         // https://www.compuphase.com/cmetric.htm
         public static double GetDistance(this Color color, Color otherColor)
         {
-            var rmean = ((long)color.R + (long)otherColor.R) / 2;
-            var dR = (long)color.R - (long)otherColor.R;
-            var dG = (long)color.G - (long)otherColor.G;
-            var dB = (long)color.B - (long)otherColor.B;
-            return Math.Sqrt((((512 + rmean) * dR * dR) >> 8) + 4 * dG * dG + (((767 - rmean) * dB * dB) >> 8));
+            var rmean = (color.R + (long)otherColor.R) / 2;
+            var dR = color.R - (long)otherColor.R;
+            var dG = color.G - (long)otherColor.G;
+            var dB = color.B - (long)otherColor.B;
+            return Math.Sqrt((((512 + rmean) * dR * dR) >> 8) + (4 * dG * dG) + (((767 - rmean) * dB * dB) >> 8));
         }
 
         // https://www.compuphase.com/cmetric.htm
         public static double GetDistance(byte r, byte g, byte b, Color otherColor)
         {
-            var rmean = ((long)r + (long)otherColor.R) / 2;
-            var dR = (long)r - (long)otherColor.R;
-            var dG = (long)g - (long)otherColor.G;
-            var dB = (long)b - (long)otherColor.B;
-            return Math.Sqrt((((512 + rmean) * dR * dR) >> 8) + 4 * dG * dG + (((767 - rmean) * dB * dB) >> 8));
+            var rmean = (r + (long)otherColor.R) / 2;
+            var dR = r - (long)otherColor.R;
+            var dG = g - (long)otherColor.G;
+            var dB = b - (long)otherColor.B;
+            return Math.Sqrt((((512 + rmean) * dR * dR) >> 8) + (4 * dG * dG) + (((767 - rmean) * dB * dB) >> 8));
         }
 
         /// <summary>
         /// From https://en.wikipedia.org/wiki/HSL_and_HSV
-        /// </summary> 
+        /// </summary>
         internal static Color HSVToColor(double hue, double saturation, double value)
         {
             hue = Clamp(hue, 0, 360);
@@ -121,8 +121,8 @@ namespace Carnation
 
             byte f(double d)
             {
-                var k = (d + hue / 60) % 6;
-                var v = value - value * saturation * Math.Max(Math.Min(Math.Min(k, 4 - k), 1), 0);
+                var k = (d + (hue / 60)) % 6;
+                var v = value - (value * saturation * Math.Max(Math.Min(Math.Min(k, 4 - k), 1), 0));
                 return (byte)Math.Round(v * 255);
             }
 
@@ -165,8 +165,8 @@ namespace Carnation
                 if (knownColor.R == color.R &&
                     knownColor.G == color.G &&
                     knownColor.B == color.B)
-                    // Alpha doesn't seem helpful here, since it doesn't really dictate what the color is but 
-                    // rather the transparency of the color
+                // Alpha doesn't seem helpful here, since it doesn't really dictate what the color is but
+                // rather the transparency of the color
                 {
                     name = Enum.GetName(typeof(System.Drawing.KnownColor), knownColorKey);
                     return true;

@@ -129,14 +129,7 @@ namespace Carnation
 
         private void RefreshSelectedSpan()
         {
-            if (ActiveWpfTextView != null)
-            {
-                SelectedSpan = ActiveWpfTextView.Selection.StreamSelectionSpan.SnapshotSpan.Span;
-            }
-            else
-            {
-                SelectedSpan = null;
-            }
+            SelectedSpan = ActiveWpfTextView?.Selection.StreamSelectionSpan.SnapshotSpan.Span;
         }
 
         public int OnAfterFirstDocumentLock(uint docCookie, uint dwRDTLockType, uint dwReadLocksRemaining, uint dwEditLocksRemaining)

@@ -16,9 +16,8 @@ namespace Carnation
             = DependencyProperty.Register(
                 nameof(Hue),
                 typeof(double),
-                typeof(HuePicker), 
+                typeof(HuePicker),
                 new PropertyMetadata(0.0, OnHueChanged));
-
 
         private readonly HuePickerAdorner _adorner;
         private bool _isMouseUpdate = false;
@@ -106,7 +105,7 @@ namespace Carnation
                 = DependencyProperty.Register(nameof(VerticalPercent), typeof(double), typeof(HuePickerAdorner), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
             private static readonly DependencyProperty ColorProperty
                 = DependencyProperty.Register(nameof(Color), typeof(Color), typeof(HuePickerAdorner), new FrameworkPropertyMetadata(Colors.Red, FrameworkPropertyMetadataOptions.AffectsRender));
-            private static readonly Pen Pen = new Pen(Brushes.Black, 1);
+            private static readonly Pen Pen = new(Brushes.Black, 1);
             private Brush _brush = Brushes.Red;
 
             public HuePickerAdorner(UIElement adornedElement)
@@ -143,9 +142,9 @@ namespace Carnation
                 var triangleGeometry = new StreamGeometry();
                 using (var context = triangleGeometry.Open())
                 {
-                    context.BeginFigure(new Point(x, y + width / 2), true, true);
+                    context.BeginFigure(new Point(x, y + (width / 2)), true, true);
                     context.LineTo(new Point(x + width, y), true, false);
-                    context.LineTo(new Point(x, y - width / 2), true, false);
+                    context.LineTo(new Point(x, y - (width / 2)), true, false);
                 }
 
                 var rightTri = triangleGeometry.Clone();
@@ -153,7 +152,6 @@ namespace Carnation
                 transformGroup.Children.Add(new ScaleTransform(-1, 1));
                 transformGroup.Children.Add(new TranslateTransform(ElementSize.Width, 0));
                 rightTri.Transform = transformGroup;
-
 
                 drawingContext.DrawGeometry(_brush, Pen, triangleGeometry);
                 drawingContext.DrawGeometry(_brush, Pen, rightTri);

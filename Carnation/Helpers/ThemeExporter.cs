@@ -65,7 +65,6 @@ $@"          <Category GUID=""{categoryItems.Key.ToString("B")}"" FontIsDefault=
                     vssettings.AppendLine("/>");
                 }
 
-
                 vssettings.AppendLine(
 $@"            </Items>
           </Category>");

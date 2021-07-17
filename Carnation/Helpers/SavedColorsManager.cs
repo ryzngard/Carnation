@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Carnation.Helpers;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Shell.Settings;
 
 namespace Carnation
 {
@@ -16,7 +10,6 @@ namespace Carnation
     {
         private static readonly string CollectionName = typeof(SavedColorsManager).FullName;
         public static readonly int NumberOfSavedColors = 18;
-
 
         public static async Task<ImmutableArray<Color>> GetColorsAsync()
         {
@@ -35,9 +28,9 @@ namespace Carnation
                 var colorInt = 0;
                 try
                 {
-                    // In case we ever change the values we're storing we might 
+                    // In case we ever change the values we're storing we might
                     // fail to retrieve a color. That's okay, just leave it to the default color
-                    // value 
+                    // value
                     colorInt = settingsStore.GetInt32(CollectionName, name);
                 }
                 catch { }
@@ -49,7 +42,7 @@ namespace Carnation
             return colors.ToImmutableArray();
         }
 
-        public static async System.Threading.Tasks.Task SaveColorAsync(Color color, int index)
+        public static async Task SaveColorAsync(Color color, int index)
         {
             var settingsStore = await OptionsHelper.GetWritableSettingsStoreAsync();
 

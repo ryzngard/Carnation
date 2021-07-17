@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.ComponentModelHost;
-using Microsoft.VisualStudio.Settings;
-using Microsoft.VisualStudio.Shell.Settings;
 
 namespace Carnation
 {
@@ -14,7 +12,7 @@ namespace Carnation
 
         public static TServiceInterface GetMefExport<TServiceInterface>(Microsoft.VisualStudio.OLE.Interop.IServiceProvider serviceProvider = null) where TServiceInterface : class
         {
-            serviceProvider = serviceProvider ?? GlobalServiceProvider;
+            serviceProvider ??= GlobalServiceProvider;
             TServiceInterface value = null;
             var componentModel = GetService<IComponentModel, SComponentModel>(serviceProvider);
 
@@ -28,7 +26,7 @@ namespace Carnation
 
         public static IEnumerable<TServiceInterface> GetMefExports<TServiceInterface>(Microsoft.VisualStudio.OLE.Interop.IServiceProvider serviceProvider = null) where TServiceInterface : class
         {
-            serviceProvider = serviceProvider ?? GlobalServiceProvider;
+            serviceProvider ??= GlobalServiceProvider;
             IEnumerable<TServiceInterface> values = null;
             var componentModel = GetService<IComponentModel, SComponentModel>(serviceProvider);
 
@@ -46,7 +44,7 @@ namespace Carnation
             where TService : class
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
-            serviceProvider = serviceProvider ?? GlobalServiceProvider;
+            serviceProvider ??= GlobalServiceProvider;
             return (TServiceInterface)GetService(serviceProvider, typeof(TService).GUID, false);
         }
 
@@ -55,22 +53,14 @@ namespace Carnation
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
             var guidInterface = VSConstants.IID_IUnknown;
-            var ptr = IntPtr.Zero;
             object service = null;
 
-            if (serviceProvider.QueryService(ref guidService, ref guidInterface, out ptr) == 0 &&
+            if (serviceProvider.QueryService(ref guidService, ref guidInterface, out var ptr) == 0 &&
                 ptr != IntPtr.Zero)
             {
                 try
                 {
-                    if (unique)
-                    {
-                        service = Marshal.GetUniqueObjectForIUnknown(ptr);
-                    }
-                    else
-                    {
-                        service = Marshal.GetObjectForIUnknown(ptr);
-                    }
+                    service = unique ? Marshal.GetUniqueObjectForIUnknown(ptr) : Marshal.GetObjectForIUnknown(ptr);
                 }
                 finally
                 {

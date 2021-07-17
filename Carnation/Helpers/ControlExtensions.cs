@@ -43,10 +43,10 @@ namespace Carnation
             }
 
             var percent = Math.Round((offset - left.Offset) / (right.Offset - left.Offset), 3);
-            var a = (byte)((right.Color.A - left.Color.A) * percent + left.Color.A);
-            var r = (byte)((right.Color.R - left.Color.R) * percent + left.Color.R);
-            var g = (byte)((right.Color.G - left.Color.G) * percent + left.Color.G);
-            var b = (byte)((right.Color.B - left.Color.B) * percent + left.Color.B);
+            var a = (byte)(((right.Color.A - left.Color.A) * percent) + left.Color.A);
+            var r = (byte)(((right.Color.R - left.Color.R) * percent) + left.Color.R);
+            var g = (byte)(((right.Color.G - left.Color.G) * percent) + left.Color.G);
+            var b = (byte)(((right.Color.B - left.Color.B) * percent) + left.Color.B);
             return Color.FromArgb(a, r, g, b);
         }
     }

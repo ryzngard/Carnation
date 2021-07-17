@@ -20,16 +20,16 @@ namespace Carnation
 
         public static readonly DependencyProperty SaturationProperty
             = DependencyProperty.Register(
-                nameof(Saturation), 
-                typeof(double), 
-                typeof(SaturationBrightnessPicker), 
+                nameof(Saturation),
+                typeof(double),
+                typeof(SaturationBrightnessPicker),
                 new PropertyMetadata(0.0, OnSaturationChanged));
 
         public static readonly DependencyProperty BrightnessProperty
             = DependencyProperty.Register(
-                nameof(Brightness), 
-                typeof(double), 
-                typeof(SaturationBrightnessPicker), 
+                nameof(Brightness),
+                typeof(double),
+                typeof(SaturationBrightnessPicker),
                 new PropertyMetadata(0.0, OnBrightnessChanged));
 
         private readonly SaturationBrightnessPickerAdorner _adorner;
@@ -133,8 +133,8 @@ namespace Carnation
             private static readonly DependencyProperty PositionProperty
                 = DependencyProperty.Register(nameof(Position), typeof(Point), typeof(SaturationBrightnessPickerAdorner), new FrameworkPropertyMetadata(new Point(), FrameworkPropertyMetadataOptions.AffectsRender));
             private static readonly Brush FillBrush = Brushes.Transparent;
-            private static readonly Pen InnerRingPen = new Pen(Brushes.White, 2);
-            private static readonly Pen OuterRingPen = new Pen(Brushes.Black, 2);
+            private static readonly Pen InnerRingPen = new(Brushes.White, 2);
+            private static readonly Pen OuterRingPen = new(Brushes.Black, 2);
 
             internal SaturationBrightnessPickerAdorner(UIElement adornedElement)
                 : base(adornedElement)
