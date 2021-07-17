@@ -9,7 +9,9 @@ namespace Carnation
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return value is Color color ? $"{color.ToString().Substring(3)}" : string.Empty;
+            return value is Color color
+                ? $"{color.ToString().Substring(3)}"
+                : string.Empty;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

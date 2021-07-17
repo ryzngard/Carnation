@@ -217,9 +217,17 @@ namespace Carnation
 
         private static string GetColorHelpText(Color color)
         {
-            return ColorHelpers.TryGetWindowsMediaName(color, out var name)
-                ? name
-                : ColorHelpers.TryGetSystemDrawingName(color, out name) ? name : $"Color Red={color.R}, Green={color.G}, Blue={color.B}";
+            if (ColorHelpers.TryGetWindowsMediaName(color, out var name))
+            {
+                return name;
+            }
+
+            if (ColorHelpers.TryGetSystemDrawingName(color, out name))
+            {
+                return name;
+            }
+
+            return $"Color Red={color.R}, Green={color.G}, Blue={color.B}";
         }
 
         private static void RefreshGrid(DependencyObject d, DependencyPropertyChangedEventArgs e)

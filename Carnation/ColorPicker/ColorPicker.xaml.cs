@@ -171,7 +171,9 @@ namespace Carnation
             var colorPicker = (ColorPicker)o;
             var vm = (ColorPickerViewModel)colorPicker.DataContext;
 
-            vm.CurrentEditorColor = (bool)e.NewValue ? vm.BackgroundColor : vm.ForegroundColor;
+            vm.CurrentEditorColor = (bool)e.NewValue
+                ? vm.BackgroundColor
+                : vm.ForegroundColor;
         }
 
         private static void OnUseExtraContrastSuggestionsChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
