@@ -32,7 +32,7 @@ namespace Carnation
         /// <summary>
         /// CarnationPackage GUID string.
         /// </summary>
-        public const string PackageGuidString = "2cc0a490-70eb-4dd6-a16e-a29b8f3d273c";
+        public const string PackageGuidString = "3492aadc-ee5e-42f0-b92c-2f7cafdbbd94";
 
         #region Package Members
 

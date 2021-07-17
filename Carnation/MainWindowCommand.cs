@@ -19,7 +19,7 @@ namespace Carnation
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("a432b46a-d8e0-4439-bd9e-58e40c02453c");
+        public static readonly Guid CommandSet = new Guid("d88a2591-5c0e-48eb-90ed-28cefb214df2");
 
         /// <summary>
         /// VS Package that provides this command, not null.

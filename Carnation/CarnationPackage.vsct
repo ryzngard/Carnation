@@ -59,10 +59,10 @@
 
   <Symbols>
     <!-- This is the package guid. -->
-    <GuidSymbol name="guidCarnationPackage" value="{2cc0a490-70eb-4dd6-a16e-a29b8f3d273c}" />
+    <GuidSymbol name="guidCarnationPackage" value="{3492aadc-ee5e-42f0-b92c-2f7cafdbbd94}" />
 
     <!-- This is the guid used to group the menu commands together -->
-    <GuidSymbol name="guidCarnationPackageCmdSet" value="{a432b46a-d8e0-4439-bd9e-58e40c02453c}">
+    <GuidSymbol name="guidCarnationPackageCmdSet" value="{d88a2591-5c0e-48eb-90ed-28cefb214df2}">
       <IDSymbol name="MainWindowCommandId" value="0x0100" />
     </GuidSymbol>
 
