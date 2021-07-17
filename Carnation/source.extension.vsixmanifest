@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="Carnation.3492aadc-ee5e-42f0-b92c-2f7cafdbbd94" Version="1.1" Language="en-US" Publisher="Andrew Hall" />
+        <Identity Id="Carnation.3492aadc-ee5e-42f0-b92c-2f7cafdbbd94" Version="2.0" Language="en-US" Publisher="Andrew Hall" />
         <DisplayName>Carnation2022</DisplayName>
         <Description xml:space="preserve">Carnation is a tool to help choose editor colors in Visual Studio. See the repository for more information: https://github.com/ryzngard/Carnation </Description>
         <Icon>Resources\EditorColors.ico</Icon>
