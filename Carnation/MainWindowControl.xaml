@@ -22,6 +22,7 @@
                 </ResourceDictionary.MergedDictionaries>
                 <local:ValueIsSetVisibilityConverter x:Key="ValueIsSetVisibilityConverter" />
                 <local:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+                <local:ContrastRatioToRatingConverter x:Key="ContrastRatioToRatingConverter" />
                 <local:BoolToFontWeightConverter x:Key="BoolToFontWeightConverter" />
                 <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
                 <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -201,7 +202,7 @@
                 <DataGridTextColumn
                     Header="Rating"
                     IsReadOnly="True"
-                    Binding="{Binding ContrastRating}">
+                    Binding="{Binding ContrastRatio, Converter={StaticResource ContrastRatioToRatingConverter}}">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center" />

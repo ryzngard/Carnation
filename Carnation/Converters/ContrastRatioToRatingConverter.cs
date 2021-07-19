@@ -11,6 +11,7 @@ namespace Carnation
             var contrast = (double)value;
             return contrast switch
             {
+                0 => string.Empty,
                 < 3 => "❌",
                 < ContrastHelpers.AA_Contrast => "⚠️",
                 < ContrastHelpers.AAA_Contrast => "AA",
