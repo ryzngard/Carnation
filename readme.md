@@ -13,6 +13,7 @@ We define carnation as the best tool for managing the Visual Studio editor's syn
 ## How to Install
 
 [Download from the marketplace for VS2019](https://marketplace.visualstudio.com/items?itemName=ryzngard.carnation-colorpicker)
+
 [Download from the marketplace for VS2022 Preview](https://marketplace.visualstudio.com/items?itemName=ryzngard.Carnation2022020)
 
 ## How to Use
