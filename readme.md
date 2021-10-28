@@ -18,6 +18,10 @@ We define carnation as the best tool for managing the Visual Studio editor's syn
 
 ## How to Use
 
+### Launching The Tool
+
+Carnation is a tool window in Visual Studio. To launch just go to `View -> Other Windows -> Carnation` in the menu. 
+
 ### Classification Grid
 
 The classification grid will list all configurable classifications for the editor. From the grid you are able to click on the Foreground and Background colors to customize to your liking.
