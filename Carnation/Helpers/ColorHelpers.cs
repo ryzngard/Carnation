@@ -8,8 +8,8 @@ namespace Carnation
 {
     internal static class ColorHelpers
     {
-        private static readonly ImmutableDictionary<byte, float> _scRgbLookup = Enumerable.Range(0, 256)
-            .ToImmutableDictionary(b => (byte)b, b => sRgbToScRgb((byte)b));
+        private static readonly ImmutableDictionary<byte, float> _sRgbLookup = Enumerable.Range(0, 256)
+            .ToImmutableDictionary(b => (byte)b, b => RgbTosRgb((byte)b));
 
         // https://www.w3.org/TR/WCAG20/#contrast-ratiodef
         public static double GetContrast(this Color color, Color otherColor)
@@ -37,57 +37,43 @@ namespace Carnation
         // https://www.w3.org/TR/WCAG20/#relativeluminancedef
         public static double ToLuminance(this Color color)
         {
-            return GetLuminance(color.ScR, color.ScG, color.ScB);
+            var sR = _sRgbLookup[color.R];
+            var sG = _sRgbLookup[color.G];
+            var sB = _sRgbLookup[color.B];
+
+            return GetLuminance(sR, sG, sB);
         }
 
         public static double GetLuminance(byte r, byte g, byte b)
         {
-            var scR = _scRgbLookup[r];
-            var scG = _scRgbLookup[g];
-            var scB = _scRgbLookup[b];
+            var sR = _sRgbLookup[r];
+            var sG = _sRgbLookup[g];
+            var sB = _sRgbLookup[b];
 
-            return GetLuminance(scR, scG, scB);
+            return GetLuminance(sR, sG, sB);
         }
 
         // https://www.w3.org/TR/WCAG20/#relativeluminancedef
-        public static double GetLuminance(float scR, float scG, float scB)
+        public static double GetLuminance(float sR, float sG, float sB)
         {
-            var R = scR <= 0.03928
-                ? scR / 12.92
-                : Math.Pow((scR + 0.055) / 1.055, 2.4);
+            var R = sR <= 0.03928
+                ? sR / 12.92
+                : Math.Pow((sR + 0.055) / 1.055, 2.4);
 
-            var G = scG <= 0.03928
-                ? scG / 12.92
-                : Math.Pow((scG + 0.055) / 1.055, 2.4);
+            var G = sG <= 0.03928
+                ? sG / 12.92
+                : Math.Pow((sG + 0.055) / 1.055, 2.4);
 
-            var B = scB <= 0.03928
-                ? scB / 12.92
-                : Math.Pow((scB + 0.055) / 1.055, 2.4);
+            var B = sB <= 0.03928
+                ? sB / 12.92
+                : Math.Pow((sB + 0.055) / 1.055, 2.4);
 
             return (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
         }
 
-        private static float sRgbToScRgb(byte bval)
+        private static float RgbTosRgb(byte bval)
         {
-            var val = bval / 255.0f;
-
-            if (!(val > 0.0))       // Handles NaN case too. (Though, NaN isn't actually
-                                    // possible in this case.)
-            {
-                return (0.0f);
-            }
-            else if (val <= 0.04045)
-            {
-                return (val / 12.92f);
-            }
-            else if (val < 1.0f)
-            {
-                return (float)Math.Pow(((double)val + 0.055) / 1.055, 2.4);
-            }
-            else
-            {
-                return (1.0f);
-            }
+            return bval / 255.0f;
         }
 
         // https://www.compuphase.com/cmetric.htm
