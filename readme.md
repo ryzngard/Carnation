@@ -42,11 +42,11 @@ If you do not know the name for a classification you want to update, don't worry
 
 ### Included Themes
 
-Carnation ships with a number of popular included themes. You can find these with the "Themes" button. These are themes from [StudioStyle](StudioStyl.es) that we enjoy. 
+Carnation ships with a number of popular included themes. You can find these with the "Themes" button. These are themes from [StudioStyle](https://StudioStyl.es) that we enjoy. 
 
 ### Import/Export Themes
 
-If you want to do more with themes, Carnation also support importing and exporting them. You can find a lot more on [StudioStyle](StudioStyl.es) or create your own! Once you've tuned everything to your liking, simply use `Themes > Export` to save. 
+If you want to do more with themes, Carnation also support importing and exporting them. You can find a lot more on [StudioStyle](https://StudioStyl.es) or create your own! Once you've tuned everything to your liking, simply use `Themes > Export` to save. 
 
 ### Reset
 
