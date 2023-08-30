@@ -9,12 +9,14 @@
         xmlns:vs2="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Imaging"
         xmlns:vs3="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Utilities"
         mc:Ignorable="d"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         WindowStartupLocation="CenterOwner"
         vs:ThemedDialogStyleLoader.UseDefaultThemedDialogStyles="True"
         vs2:ImageThemingUtilities.ThemeScrollBars="True"
         Background="{DynamicResource {x:Static vs:ThemedDialogColors.WindowPanelBrushKey}}"
-        Title="Color Picker" Height="620" Width="800">
+        Title="Color Picker" 
+        Height="620"
+        Width="800">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Button" BasedOn="{StaticResource {x:Static vsfx:VsResourceKeys.ThemedDialogButtonStyleKey}}">
